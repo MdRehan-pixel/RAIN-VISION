@@ -1,4 +1,4 @@
-import type { CurrentWeather, ForecastEnvelope, InundationResult, RiskCategory, RiskResult } from "@/lib/types";
+import type { CurrentWeather, ForecastEnvelope, InundationResult, RiskCategory, RiskFactors, RiskResult } from "@/lib/types";
 
 const clamp = (value: number, min = 0, max = 100) => Math.min(max, Math.max(min, Number.isFinite(value) ? value : 0));
 
@@ -50,6 +50,52 @@ export const calculateRisk = (forecast: ForecastEnvelope, radarLive = false): Ri
         ? "Monitor updates and avoid unnecessary travel during peak rainfall."
         : "Conditions are within prototype monitoring range; continue normal awareness.";
   return { score, category, factors: { rainfall, probability, accumulation, nwp, cloudRadar, vulnerability }, recommendation, inundation };
+};
+
+/** Prototype fusion weights shared by the live engine and historical replay. */
+export const RISK_WEIGHTS: Record<keyof RiskFactors, number> = { rainfall: 0.3, probability: 0.2, accumulation: 0.2, nwp: 0.15, cloudRadar: 0.05, vulnerability: 0.1 };
+
+/** Same normalisers as calculateRisk, exposed so historical replay uses identical scaling. */
+export const normalizeSignals = {
+  rainfall: (intensityMmPerHour: number) => clamp(intensityMmPerHour * 20),
+  accumulation: (accumulation6: number, accumulation24: number) => clamp(accumulation6 * 8 + accumulation24 * 0.7),
+  cloud: (cloudCoverPercent: number) => clamp(cloudCoverPercent * 0.55),
+};
+
+export type SignalInputs = Record<keyof RiskFactors, number | null>;
+
+export interface FusedRisk {
+  score: number;
+  category: RiskCategory;
+  /** Normalised 0-100 input per factor; null when the signal was unavailable. */
+  factors: SignalInputs;
+  /** Effective weight after renormalising over available signals. */
+  effectiveWeights: Record<keyof RiskFactors, number>;
+  /** Points each factor contributed to the final score (value x effective weight). */
+  contributions: Record<keyof RiskFactors, number>;
+  /** Share of the nominal weight that was available (1 = every signal present). */
+  availableWeight: number;
+}
+
+/**
+ * Fuse already-normalised 0-100 signals with the prototype weights. Signals that are `null`
+ * (unavailable) are excluded and the remaining weights are renormalised so the score still
+ * spans 0-100. Nothing is imputed for a missing signal.
+ */
+export const fuseSignals = (inputs: SignalInputs): FusedRisk => {
+  const keys = Object.keys(RISK_WEIGHTS) as (keyof RiskFactors)[];
+  const availableWeight = keys.reduce((total, key) => total + (inputs[key] === null ? 0 : RISK_WEIGHTS[key]), 0);
+  const effectiveWeights = {} as Record<keyof RiskFactors, number>;
+  const contributions = {} as Record<keyof RiskFactors, number>;
+  let score = 0;
+  for (const key of keys) {
+    const value = inputs[key];
+    effectiveWeights[key] = value === null || availableWeight === 0 ? 0 : RISK_WEIGHTS[key] / availableWeight;
+    contributions[key] = value === null ? 0 : clamp(value) * effectiveWeights[key];
+    score += contributions[key];
+  }
+  const rounded = Math.round(score);
+  return { score: rounded, category: categoryForScore(rounded), factors: inputs, effectiveWeights, contributions, availableWeight };
 };
 
 export const calculateInundation = (intensity: number, accumulation6: number, probability: number, vulnerability: number, accumulation24: number): InundationResult => {

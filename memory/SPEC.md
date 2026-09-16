@@ -20,6 +20,13 @@ RAIN VISION is a Smart India Hackathon 2026 prototype command center for pan-Ind
 6. Registration is DEMO LOCAL REGISTRATION. Browser notifications are real where permission is granted.
 7. `GET /api/sms/config` verifies sender ownership against Twilio (cached 5 min) and reports `sender_verification` = VERIFIED / NOT_PROVISIONED / UNVERIFIED / NOT_CONFIGURED plus `account_type`. Automatic HIGH/EXTREME sends are ARMED only when the sender is VERIFIED; failed sends surface Twilio's real `error_code` and message. Twilio Programmable Messaging automatically submits only non-demo HIGH/EXTREME alerts for a registered E.164 recipient. Idempotency suppresses duplicates. `QUEUED`/`SENT`/`DELIVERED`/`FAILED` are displayed only from Twilio responses or signed status callbacks; demo stages never send real messages.
 
+## Historical incident replay (backtest)
+- Route `/historical`, page `frontend/src/pages/HistoricalReplay.tsx`, builder `frontend/src/lib/historical.ts`, dataset `data/historical/chennai_2015.json`, API `backend/routers/historical.py` (`GET /api/historical/incidents`, `GET /api/historical/incidents/{id}`, 404 for unknown id).
+- ERA5 reanalysis hourly observations (HISTORICAL); probability/radar/satellite/NWP are `null` = UNAVAILABLE; vulnerability proxy 40 = PROTOTYPE.
+- Steps: daily, 3-hourly across `replay.detailStart..detailEnd` (1–2 Dec 2015). Each step: peak hourly intensity, trailing 6 h/24 h accumulation, mean cloud → `fuseSignals` (same weights/thresholds as live, renormalised over available signals) + prototype inundation. Alert status: LOW→NO ALERT, MODERATE→WATCH, HIGH→WARNING, EXTREME→EXTREME WARNING.
+- In this view the top badge reads HISTORICAL BACKTEST MODE, live forecast/spatial/pan-India/radar queries are disabled, and the auto-SMS effect is skipped. Replay never mutates live risk state.
+- Controls: Run historical replay, Play/Pause, Next step, Reset. Comparison card appears on completion; no accuracy metric is claimed.
+
 ## Honest provenance
 - LIVE: Open-Meteo forecast/geocoding, ECMWF model response where accepted, RainViewer metadata when available, OSM map tiles, and Twilio SMS submission/status callbacks when fully configured.
 - FALLBACK: cached live snapshot after a network/provider failure.

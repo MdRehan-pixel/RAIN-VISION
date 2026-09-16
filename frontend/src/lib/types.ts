@@ -214,3 +214,78 @@ export interface SmsDeliveryStatusResponse {
   error_code?: string;
   updated_at: string;
 }
+// ---- Historical incident replay (mirrors backend/models/historical.py) ----
+export type HistoricalStatus = "HISTORICAL" | "DERIVED" | "PROTOTYPE" | "UNAVAILABLE";
+
+export interface IncidentLocation { city: string; state: string; country: string; latitude: number; longitude: number }
+export interface IncidentPeriod { start: string; end: string }
+
+export interface IncidentInfo {
+  id: string;
+  name: string;
+  location: IncidentLocation;
+  period: IncidentPeriod;
+  eventType: string;
+  dataType: "HISTORICAL";
+  primaryDemo: boolean;
+  summary: string;
+}
+
+export interface HistoricalProvenance {
+  source: string;
+  sourceUrl: string;
+  retrievedAt: string;
+  gridLatitude: number;
+  gridLongitude: number;
+  gridElevationM: number;
+  timezone: string;
+  resolution: string;
+  dataType: "HISTORICAL";
+  status: "HISTORICAL";
+  note: string;
+}
+
+export interface VariableMeta { key: string; label: string; unit: string; status: HistoricalStatus; source: string }
+export interface DocumentedFact { label: string; value: string; source: string }
+
+/** One historical timestep. `null` means genuinely unavailable in the dataset - never filled. */
+export interface HistoricalObservation {
+  timestamp: string;
+  rainfall: number | null;
+  precipitationProbability: number | null;
+  temperature: number | null;
+  humidity: number | null;
+  windSpeed: number | null;
+  cloudCover: number | null;
+  surfacePressure?: number | null;
+  radarSignal: number | null;
+  satelliteSignal: number | null;
+  nwpSignal: number | null;
+  vulnerabilityProxy: number | null;
+}
+
+export interface ReplayConfig { detailStart: string; detailEnd: string; detailStepHours: number; note: string }
+
+export interface HistoricalIncident {
+  incident: IncidentInfo;
+  replay?: ReplayConfig;
+  provenance: HistoricalProvenance;
+  variables: VariableMeta[];
+  documentedFacts: DocumentedFact[];
+  unavailable: string[];
+  observations: HistoricalObservation[];
+}
+
+export interface IncidentSummary {
+  id: string;
+  name: string;
+  location: IncidentLocation;
+  period: IncidentPeriod;
+  eventType: string;
+  dataType: "HISTORICAL";
+  primaryDemo: boolean;
+  observationCount: number;
+  status: "READY FOR REPLAY";
+}
+
+export interface IncidentListResponse { incidents: IncidentSummary[] }

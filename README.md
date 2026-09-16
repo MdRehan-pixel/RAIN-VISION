@@ -87,6 +87,17 @@ Twilio trial accounts may send only to verified recipients and may prepend trial
 7. Simulate network failure or use the browser offline event. Show automatic offline mode, cache age, and local alert engine.
 8. Restore connectivity and show automatic live refresh.
 
+## Historical incident replay (backtest)
+
+`Historical Incident Replay` (nav item, route `/historical`) replays a documented past event through the same prototype fusion engine used live. It is a **backtest**, not a claim that the prototype predicted the event.
+
+- Dataset file: `data/historical/chennai_2015.json` (replaceable; one file per incident). Served by `GET /api/historical/incidents` and `GET /api/historical/incidents/{id}`.
+- Source: Open-Meteo Historical Weather API (ECMWF ERA5 reanalysis, hourly, 8 Nov – 5 Dec 2015, Chennai grid cell). Values are used exactly as returned; `null` is never filled.
+- Available (HISTORICAL): rainfall, temperature, humidity, wind, cloud cover, surface pressure. DERIVED: trailing 6 h / 24 h accumulation. PROTOTYPE: vulnerability proxy (40). UNAVAILABLE: precipitation probability, radar, satellite, archived NWP, river levels, DEM, drainage, flood depth.
+- Engine: identical weights/thresholds/normalisers as live (`frontend/src/lib/risk.ts`, `fuseSignals`). Weights of unavailable signals are renormalised over the available ones (65 % of nominal weight is available for this dataset) and this is shown in the UI.
+- Timeline: daily steps across the window, 3-hourly across the documented 1–2 Dec peak (42 steps). Live weather fetching is paused on this view; no browser or SMS alerts are dispatched.
+- Known honest finding: the ERA5 grid cell shows ~49 mm on 1 Dec 2015 versus documented station totals of 470–490 mm — reanalysis smooths local convective extremes. The replay therefore peaks on 8 Nov, not 1 Dec. This is displayed, not hidden.
+
 ## Limitations and future scope
 
 This zero-budget MVP does not claim official IMD/ISRO access, scientific accuracy, production readiness, validated flood depth, LoRa hardware, cellular fallback, historical ML calibration, or government warning authority. SMS delivery is claimed only when Twilio’s signed callback says `delivered`; trial restrictions, carrier filtering, destination verification, and account balance can still prevent delivery.
