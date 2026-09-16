@@ -60,14 +60,15 @@ async def _get_json(request: Request, url: str, params: dict[str, Any], ttl: int
     now = monotonic()
     if hit and now - hit[0] < ttl:
         return hit[1], True, hit[2]
+    payload: Any = None
     try:
         response = await request.app.state.http.get(url, params=params)
         response.raise_for_status()
         payload = response.json()
-        if not isinstance(payload, dict):
-            raise ValueError("unexpected upstream payload")
     except (httpx.HTTPError, ValueError) as exc:
         raise HTTPException(status_code=503, detail="upstream weather service unavailable") from exc
+    if not isinstance(payload, (dict, list)):
+        raise HTTPException(status_code=503, detail="unexpected upstream payload")
     fetched_at = _now()
     _cache[key] = (now, payload, fetched_at)
     return payload, False, fetched_at
@@ -141,10 +142,12 @@ async def geocode(
 
 @router.get("/radar", response_model=RadarResponse)
 async def radar(request: Request):
+    data: dict[str, Any] = {}
+    fetched_at = _now()
     try:
         data, _, fetched_at = await _get_json(request, RAINVIEWER, {}, 300)
     except HTTPException:
-        return RadarResponse(status="UNAVAILABLE", fetched_at=_now())
+        return RadarResponse(status="UNAVAILABLE", fetched_at=fetched_at)
     host = data.get("host")
     past = data.get("radar", {}).get("past", []) if isinstance(data.get("radar"), dict) else []
     if not host or not past:
@@ -166,10 +169,12 @@ async def _multi_current(request: Request, cities: list[tuple[str, float, float]
 
 @router.get("/pan-india", response_model=PanIndiaResponse)
 async def pan_india(request: Request):
+    values: list[dict[str, Any]] = []
+    fetched_at = _now()
     try:
         values, fetched_at = await _multi_current(request, PAN_INDIA_CITIES)
     except HTTPException:
-        return PanIndiaResponse(status="FALLBACK", fetched_at=_now())
+        return PanIndiaResponse(status="FALLBACK", fetched_at=fetched_at)
     cities = [
         CityWeather(name=city[0], latitude=city[1], longitude=city[2], current=value.get("current", {}))
         for city, value in zip(PAN_INDIA_CITIES, values)
@@ -189,10 +194,12 @@ async def spatial(
     lon_step = radius_km / max(111.0 * math.cos(math.radians(latitude)), 1.0)
     points = [(name, latitude + lat_step * y, longitude + lon_step * x) for name, x, y in offsets]
     requests = [(name, lat, lon) for name, lat, lon in points]
+    values: list[dict[str, Any]] = []
+    fetched_at = _now()
     try:
         values, fetched_at = await _multi_current(request, requests)
     except HTTPException:
-        return SpatialResponse(status="FALLBACK", radius_km=radius_km, fetched_at=_now())
+        return SpatialResponse(status="FALLBACK", radius_km=radius_km, fetched_at=fetched_at)
     spatial_points = [
         SpatialPoint(
             name=point[0],

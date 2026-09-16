@@ -9,6 +9,14 @@ export const categoryForScore = (score: number): RiskCategory => {
   return "LOW";
 };
 
+/** Plain-language safety guidance per category (prototype, not an official advisory). */
+export const RECOMMENDATIONS: Record<RiskCategory, string> = {
+  EXTREME: "Move to higher ground, avoid underpasses and follow official emergency instructions.",
+  HIGH: "Avoid low-lying roads and prepare to shelter away from drainage channels.",
+  MODERATE: "Monitor updates and avoid unnecessary travel during peak rainfall.",
+  LOW: "Conditions are within prototype monitoring range; continue normal awareness.",
+};
+
 export const riskColor = (category: RiskCategory) => ({
   LOW: "#059669",
   MODERATE: "#D97706",
@@ -42,13 +50,7 @@ export const calculateRisk = (forecast: ForecastEnvelope, radarLive = false): Ri
   const score = Math.round(rainfall * 0.3 + probability * 0.2 + accumulation * 0.2 + nwp * 0.15 + cloudRadar * 0.05 + vulnerability * 0.1);
   const category = categoryForScore(score);
   const inundation = calculateInundation(intensity, accumulation6, probability, vulnerability, accumulation24);
-  const recommendation = category === "EXTREME"
-    ? "Move to higher ground, avoid underpasses and follow official emergency instructions."
-    : category === "HIGH"
-      ? "Avoid low-lying roads and prepare to shelter away from drainage channels."
-      : category === "MODERATE"
-        ? "Monitor updates and avoid unnecessary travel during peak rainfall."
-        : "Conditions are within prototype monitoring range; continue normal awareness.";
+  const recommendation = RECOMMENDATIONS[category];
   return { score, category, factors: { rainfall, probability, accumulation, nwp, cloudRadar, vulnerability }, recommendation, inundation };
 };
 
@@ -98,6 +100,12 @@ export const fuseSignals = (inputs: SignalInputs): FusedRisk => {
   return { score: rounded, category: categoryForScore(rounded), factors: inputs, effectiveWeights, contributions, availableWeight };
 };
 
+const inundationTrend = (accumulation6: number): InundationResult["trend"] => {
+  if (accumulation6 > 12) return "RISING";
+  if (accumulation6 > 4) return "STABLE";
+  return "EASING";
+};
+
 export const calculateInundation = (intensity: number, accumulation6: number, probability: number, vulnerability: number, accumulation24: number): InundationResult => {
   const factors = {
     intensity: clamp(intensity * 20),
@@ -106,7 +114,7 @@ export const calculateInundation = (intensity: number, accumulation6: number, pr
     vulnerability: clamp(vulnerability),
   };
   const score = Math.round(factors.intensity * 0.35 + factors.accumulation * 0.35 + factors.probability * 0.15 + factors.vulnerability * 0.15);
-  const trend = accumulation6 > 12 ? "RISING" : accumulation6 > 4 ? "STABLE" : "EASING";
+  const trend = inundationTrend(accumulation6);
   return { score, category: categoryForScore(score), factors, trend };
 };
 
@@ -119,7 +127,7 @@ export const demoRisk = (stage: number): RiskResult => {
     score,
     category,
     factors,
-    recommendation: category === "EXTREME" || category === "HIGH" ? "Emergency scenario: move to higher ground and follow local authority guidance." : "Emergency scenario is escalating; keep monitoring the command center.",
+    recommendation: score >= 50 ? "Emergency scenario: move to higher ground and follow local authority guidance." : "Emergency scenario is escalating; keep monitoring the command center.",
     inundation: { score: Math.max(0, score - 4), category: categoryForScore(Math.max(0, score - 4)), factors: { intensity: score, accumulation: Math.max(0, score - 8), probability: Math.min(100, score + 4), vulnerability: 40 }, trend: score > 50 ? "RISING" : "STABLE" },
   };
 };

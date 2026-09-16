@@ -2,19 +2,37 @@ import { Check, RefreshCw, Send, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ProvenanceBadge from "@/components/ProvenanceBadge";
-import type { RegisteredLocation, SmsConfigResponse, SmsDeliveryStatusResponse, SmsSendResponse } from "@/lib/types";
+import type { Provenance, RegisteredLocation, SmsConfigResponse, SmsDeliveryStatus, SmsDeliveryStatusResponse, SmsSendResponse } from "@/lib/types";
 
-const maskPhone = (phone: string) => phone.length > 6 ? `${phone.slice(0, 3)} ${phone.slice(3, 5)}*** **${phone.slice(-3)}` : "Recipient not configured";
+const maskPhone = (phone: string) => (phone.length > 6 ? `${phone.slice(0, 3)} ${phone.slice(3, 5)}*** **${phone.slice(-3)}` : "Recipient not configured");
+
+type GatewayStatus = SmsDeliveryStatus | "CHECKING" | "READY" | "SENDER_NOT_PROVISIONED" | "UNVERIFIED";
+
+/** Gateway state before any send: only READY when Twilio confirms the sender is owned. */
+const idleStatusFor = (config?: SmsConfigResponse): GatewayStatus => {
+  if (!config) return "CHECKING";
+  if (!config.configured) return "NOT_CONFIGURED";
+  if (config.sender_verification === "VERIFIED") return "READY";
+  if (config.sender_verification === "NOT_PROVISIONED") return "SENDER_NOT_PROVISIONED";
+  return "UNVERIFIED";
+};
+
+const badgeFor = (status: GatewayStatus): Provenance => {
+  if (status === "DELIVERED" || status === "SENT" || status === "READY") return "LIVE";
+  if (status === "FAILED" || status === "UNDELIVERED" || status === "SENDER_NOT_PROVISIONED") return "UNAVAILABLE";
+  if (status === "NOT_CONFIGURED") return "FUTURE";
+  return "SIMULATED";
+};
+
+const formatCallbackTime = (value: string) => new Date(value).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
 export default function SmsGatewayCard({ registration, config, sendResult, delivery, isPending, isOnline, onSendTest }: { registration?: RegisteredLocation; config?: SmsConfigResponse; sendResult?: SmsSendResponse; delivery?: SmsDeliveryStatusResponse; isPending: boolean; isOnline: boolean; onSendTest: () => void }) {
-  const senderVerified = config?.sender_verification === "VERIFIED";
-  const gatewayReady = !!config?.configured && senderVerified;
-  const idleStatus = !config ? "CHECKING" : !config.configured ? "NOT_CONFIGURED" : senderVerified ? "READY" : config.sender_verification === "NOT_PROVISIONED" ? "SENDER_NOT_PROVISIONED" : "UNVERIFIED";
-  const status = delivery?.status ?? sendResult?.status ?? idleStatus;
-  const badgeStatus = status === "DELIVERED" || status === "SENT" || status === "READY" ? "LIVE" : status === "FAILED" || status === "UNDELIVERED" || status === "SENDER_NOT_PROVISIONED" ? "UNAVAILABLE" : status === "NOT_CONFIGURED" ? "FUTURE" : "SIMULATED";
-  const detail = delivery
-    ? `Twilio callback confirmed ${delivery.provider_status.toUpperCase()} at ${new Date(delivery.updated_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}.`
-    : sendResult?.detail ?? config?.detail ?? "Checking the SMS gateway configuration…";
+  const gatewayReady = !!config?.configured && config.sender_verification === "VERIFIED";
+  const status: GatewayStatus = delivery?.status ?? sendResult?.status ?? idleStatusFor(config);
+  const badgeStatus = badgeFor(status);
+  let detail = config?.detail ?? "Checking the SMS gateway configuration…";
+  if (delivery) detail = `Twilio callback confirmed ${delivery.provider_status.toUpperCase()} at ${formatCallbackTime(delivery.updated_at)}.`;
+  else if (sendResult) detail = sendResult.detail;
   return <Card data-testid="recipient-status-card" className="border-slate-200 shadow-sm">
     <CardHeader>
       <div className="flex items-start justify-between gap-3"><div><CardTitle className="flex items-center gap-2"><Smartphone size={18} className="text-slate-700" />Recipient & SMS gateway</CardTitle><CardDescription>Twilio Programmable Messaging · provider-confirmed states only</CardDescription></div><ProvenanceBadge status={badgeStatus} label={status} /></div>

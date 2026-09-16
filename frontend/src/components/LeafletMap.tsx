@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Circle, CircleMarker, MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import type { CityWeather, LocationState, SpatialPoint } from "@/lib/types";
-import { calculateRisk, categoryForScore } from "@/lib/risk";
+import { calculateRisk } from "@/lib/risk";
 import { makeFallbackForecast, formatNumber } from "@/lib/weather";
 import type { ForecastEnvelope } from "@/lib/types";
 import "leaflet/dist/leaflet.css";

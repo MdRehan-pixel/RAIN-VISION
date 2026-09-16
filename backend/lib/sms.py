@@ -76,6 +76,8 @@ async def verify_sender(client: httpx.AsyncClient, config: SmsConfiguration) -> 
         return _sender_cache["verification"], _sender_cache["account_type"]
     auth = httpx.BasicAuth(config.account_sid, config.auth_token)
     base = f"https://api.twilio.com/2010-04-01/Accounts/{config.account_sid}"
+    verification = "UNVERIFIED"
+    account_type: str | None = None
     try:
         account = await client.get(f"{base}.json", auth=auth, timeout=10)
         account.raise_for_status()
@@ -174,7 +176,8 @@ class TwilioSmsNotificationService:
             )
         except (httpx.HTTPError, ValueError) as exc:
             logger.warning("Twilio message submission failed: %s", type(exc).__name__)
-            error_code = str(payload["code"]) if payload.get("code") is not None else None
+            raw_code = payload.get("code")
+            error_code = None if raw_code is None else str(raw_code)
             provider_message = str(payload.get("message", "")).strip()
             detail = f"Twilio rejected the request (error {error_code}): {provider_message} No delivery is claimed." if error_code else "Twilio rejected or could not process the message request. No delivery is claimed."
             return SmsSendResponse(
