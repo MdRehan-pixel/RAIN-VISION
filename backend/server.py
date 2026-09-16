@@ -9,6 +9,7 @@ from pathlib import Path
 import httpx
 
 from routers.weather import router as weather_router
+from routers.sms import router as sms_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -45,6 +46,7 @@ async def root():
 
 
 api_router.include_router(weather_router)
+api_router.include_router(sms_router)
 
 app.add_middleware(
     CORSMiddleware,

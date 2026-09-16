@@ -164,3 +164,53 @@ export interface CacheSnapshot {
   savedAt: string;
   history: HistoryPoint[];
 }
+
+export type SmsDeliveryStatus = "NOT_CONFIGURED" | "QUEUED" | "ACCEPTED" | "SCHEDULED" | "SENDING" | "SENT" | "DELIVERED" | "UNDELIVERED" | "FAILED" | "UNKNOWN";
+
+export interface SmsAlertRequest {
+  recipient: string;
+  location: string;
+  risk: number;
+  severity: RiskCategory;
+  rainfall: number;
+  inundation: number;
+  last_live_update: string;
+  recommended_action: string;
+  idempotency_key: string;
+  test_mode: boolean;
+}
+
+export type SmsSenderVerification = "VERIFIED" | "NOT_PROVISIONED" | "UNVERIFIED" | "NOT_CONFIGURED";
+
+export interface SmsConfigResponse {
+  configured: boolean;
+  gateway: string;
+  sender_type: "MESSAGING_SERVICE" | "PHONE_NUMBER" | "NONE";
+  sender_masked?: string;
+  sender_verification: SmsSenderVerification;
+  account_type?: string;
+  callback_configured: boolean;
+  automatic_alerts: boolean;
+  detail: string;
+}
+
+export interface SmsSendResponse {
+  configured: boolean;
+  gateway: string;
+  status: SmsDeliveryStatus;
+  message_sid?: string;
+  provider_status?: string;
+  error_code?: string;
+  detail: string;
+  updated_at: string;
+  duplicate: boolean;
+}
+
+export interface SmsDeliveryStatusResponse {
+  message_sid: string;
+  status: SmsDeliveryStatus;
+  provider_status: string;
+  recipient_masked: string;
+  error_code?: string;
+  updated_at: string;
+}

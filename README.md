@@ -15,6 +15,7 @@ RAIN VISION is a functional Smart India Hackathon 2026 prototype command center 
 - Real OpenStreetMap Leaflet map, monitoring radius, surrounding weather points, and live-mode pan-India city markers
 - Prototype AI/data-fusion risk engine and rainfall-driven inundation estimate with transparent factors and disclaimers
 - Local registration, masked recipient display, geofenced high/extreme warnings, browser Notification API alerts, cooldown/de-duplication
+- Twilio Programmable Messaging adapter with automatic live HIGH/EXTREME sends, test alerts, idempotency, signed status callbacks, and Mongo delivery-state persistence
 - Automatic online/offline detection, localStorage cache, cached refresh survival, automatic live recovery, and jury demo network failure
 - Accelerated emergency scenario, analytics trends, provenance ledger, future SMS/edge/LoRa architecture labels, and responsive settings
 
@@ -27,7 +28,7 @@ FastAPI /api forecast + geocode + spatial + pan-india + radar
           ↓ Open-Meteo / ECMWF attempt / RainViewer metadata
 Deterministic prototype fusion + inundation engine
           ↓
-Leaflet GIS · alerts · browser notifications · localStorage cache
+Leaflet GIS · alerts · browser notifications · Twilio SMS · localStorage cache
           ↓ network loss → latest known data + local alert engine
 ```
 
@@ -44,7 +45,8 @@ The frontend uses TanStack Query and the typed relative `/api` fetch layer. Back
 | SatelliteAdapter | Cloud/satellite signal | SIMULATED demo adapter; no ISRO claim |
 | Risk engine | Weighted prototype fusion | ACTIVE; requires historical calibration |
 | Cache/offline | Last successful weather/risk/snapshot | FALLBACK when disconnected |
-| SMS / cellular / LoRa | Future delivery architecture | FUTURE; no delivery is claimed |
+| Twilio Programmable Messaging | SMS submission and signed delivery callbacks | CONFIGURED when credentials/sender exist; provider states only |
+| Cellular / LoRa edge | Communication-blackout architecture | FUTURE; no hardware is claimed |
 
 ## Risk and inundation methodology
 
@@ -61,7 +63,18 @@ cd /app/backend && uvicorn server:app --host 0.0.0.0 --port 8001 --reload
 cd /app/frontend && yarn dev
 ```
 
-`backend/.env` contains `MONGO_URL`, `DB_NAME`, `CORS_ORIGINS`, and an optional `APP_URL`. No provider API keys are required. The frontend calls relative `/api` paths through Vite’s proxy. For the map packages in this build, use `yarn install` after checkout if dependencies are not already present.
+`backend/.env` contains `MONGO_URL`, `DB_NAME`, `CORS_ORIGINS`, optional `APP_URL`, and the server-only Twilio variables below. The frontend calls relative `/api` paths through Vite’s proxy. Never expose the Twilio Auth Token through Vite or React.
+
+```env
+TWILIO_ACCOUNT_SID=AC...
+TWILIO_AUTH_TOKEN=...
+TWILIO_FROM_NUMBER=+1...            # or TWILIO_MESSAGING_SERVICE_SID=MG...
+TWILIO_STATUS_CALLBACK_URL=https://your-public-host/api/sms/status-callback
+TWILIO_VALIDATE_SIGNATURE=true
+TWILIO_AUTO_SEND=true
+```
+
+Twilio trial accounts may send only to verified recipients and may prepend trial text. A provider `QUEUED` or `SENT` state is not displayed as `DELIVERED`; final delivery comes from the signed callback.
 
 ## Three-minute jury demonstration
 
@@ -70,13 +83,13 @@ cd /app/frontend && yarn dev
 3. Open Live Risk Map, search Bengaluru then Mumbai, and click a new point to demonstrate coordinate consistency.
 4. Register a local recipient in Settings and enable browser alerts.
 5. Start Emergency Demo: normal → moderate → high → extreme → geofenced warning.
-6. Show Alerts and the honest “SMS gateway not configured / payload ready” state.
+6. Show Alerts, register an E.164 recipient, submit a clearly labeled provider test alert, and watch Twilio-confirmed status without claiming delivery early.
 7. Simulate network failure or use the browser offline event. Show automatic offline mode, cache age, and local alert engine.
 8. Restore connectivity and show automatic live refresh.
 
 ## Limitations and future scope
 
-This zero-budget MVP does not claim official IMD/ISRO access, scientific accuracy, production readiness, validated flood depth, SMS delivery, LoRa hardware, cellular fallback, historical ML calibration, or government warning authority. Production work should add authorized feeds, historical validation, DEM/topography, drainage and hydrology, secure accounts, an approved SMS gateway, edge/cellular/LoRa paths, and operational governance.
+This zero-budget MVP does not claim official IMD/ISRO access, scientific accuracy, production readiness, validated flood depth, LoRa hardware, cellular fallback, historical ML calibration, or government warning authority. SMS delivery is claimed only when Twilio’s signed callback says `delivered`; trial restrictions, carrier filtering, destination verification, and account balance can still prevent delivery.
 
 ## Template implementation notes
 
