@@ -51,10 +51,10 @@ export function useRainVision() {
   const isOnline = networkOnline && !demoOffline;
   // Historical backtest mode must not mix live weather into the replay, so live fetching pauses on that view.
   const liveFetchEnabled = isOnline && currentView !== "historical";
-  const coordinateKey = `${location.latitude.toFixed(5)}&longitude=${location.longitude.toFixed(5)}`;
+  const coordinateKey = `${location.latitude.toFixed(3)}&longitude=${location.longitude.toFixed(3)}`;
 
   const forecastQuery = useQuery({
-    queryKey: ["forecast", location.latitude.toFixed(4), location.longitude.toFixed(4)],
+    queryKey: ["forecast", location.latitude.toFixed(3), location.longitude.toFixed(3)],
     queryFn: () => apiGet<ForecastEnvelope>(`/forecast?latitude=${coordinateKey}`),
     enabled: liveFetchEnabled,
     retry: 1,
