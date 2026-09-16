@@ -31,7 +31,8 @@ async def lifespan(app: FastAPI):
     )
     yield
     await app.state.http.aclose()
-    client.close()
+    if client is not None:
+        client.close()
 
 
 # Create the main app without a prefix
