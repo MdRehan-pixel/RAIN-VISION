@@ -1,0 +1,165 @@
+{
+  "project_name": "RAIN VISION",
+  "tagline": "Pan-India Heavy Rainfall & Inundation Early Warning System",
+  "hackathon_theme": "Smart India Hackathon 2026 - AI/ML-Based Integrated Heavy Rainfall Early Warning & Inundation Prediction System",
+  "theme_strategy": {
+    "visual_archetype": "Emergency Management Command Center / Precision Civic SaaS",
+    "tone": "Authoritative, crisp, life-critical, calm, objective, transparent",
+    "base_theme": "Light mode primary (clean crisp white/light background with pale blue-slate structural panels) with high-contrast tactical dark navy typography and disciplined alert accents",
+    "forbidden_styles": [
+      "Neon cyberpunk",
+      "Purple tech gradients",
+      "Muddy glassmorphism",
+      "Overloaded bouncy 3D",
+      "Vercel dark template clone",
+      "Arbitrary randomized live numbers"
+    ]
+  },
+  "typography": {
+    "font_family_heading": "IBM Plex Sans, -apple-system, BlinkMacSystemFont, sans-serif",
+    "font_family_body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    "font_family_mono": "IBM Plex Mono, JetBrains Mono, monospace",
+    "scale": {
+      "h1_hero": "text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight",
+      "h2_section": "text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight text-slate-900",
+      "h3_card": "text-lg sm:text-xl font-semibold text-slate-900",
+      "h4_sub": "text-sm sm:text-base font-medium text-slate-800",
+      "body_base": "text-sm sm:text-base text-slate-700 leading-relaxed",
+      "body_muted": "text-xs sm:text-sm text-slate-500",
+      "eyebrow_badge": "text-[11px] font-mono uppercase tracking-[0.18em] font-semibold",
+      "metric_giant": "text-3xl sm:text-4xl lg:text-5xl font-mono font-bold tracking-tight"
+    }
+  },
+  "colors": {
+    "background_canvas": "#F8FAFC",
+    "background_card": "#FFFFFF",
+    "background_card_tinted": "#F1F5F9",
+    "background_command_strip": "#0F172A",
+    "foreground_navy": "#091428",
+    "foreground_slate": "#334155",
+    "foreground_muted": "#64748B",
+    "border_subtle": "#E2E8F0",
+    "border_medium": "#CBD5E1",
+    "brand_deep_navy": "#0B192C",
+    "brand_tactical_blue": "#1E40AF",
+    "brand_sky_focus": "#0284C7",
+    "risk_palette": {
+      "low": {
+        "score_range": "0 - 29",
+        "label": "LOW",
+        "bg": "bg-emerald-50",
+        "text": "text-emerald-800",
+        "border": "border-emerald-200",
+        "badge": "bg-emerald-100 text-emerald-800 border-emerald-300",
+        "hex": "#059669"
+      },
+      "moderate": {
+        "score_range": "30 - 49",
+        "label": "MODERATE",
+        "bg": "bg-amber-50",
+        "text": "text-amber-900",
+        "border": "border-amber-200",
+        "badge": "bg-amber-100 text-amber-900 border-amber-300",
+        "hex": "#D97706"
+      },
+      "high": {
+        "score_range": "50 - 69",
+        "label": "HIGH",
+        "bg": "bg-orange-50",
+        "text": "text-orange-950",
+        "border": "border-orange-300",
+        "badge": "bg-orange-100 text-orange-900 border-orange-300",
+        "hex": "#EA580C"
+      },
+      "extreme": {
+        "score_range": "70 - 100",
+        "label": "EXTREME",
+        "bg": "bg-rose-50",
+        "text": "text-rose-950",
+        "border": "border-rose-400",
+        "badge": "bg-rose-100 text-rose-900 border-rose-300",
+        "hex": "#DC2626"
+      }
+    },
+    "provenance_badges": {
+      "LIVE": "bg-emerald-100 text-emerald-800 border-emerald-300",
+      "FALLBACK": "bg-amber-100 text-amber-900 border-amber-300",
+      "DEMO": "bg-indigo-100 text-indigo-900 border-indigo-300",
+      "SIMULATED": "bg-sky-100 text-sky-900 border-sky-300",
+      "FUTURE": "bg-slate-100 text-slate-700 border-slate-300 border-dashed",
+      "UNAVAILABLE": "bg-neutral-100 text-neutral-600 border-neutral-300"
+    }
+  },
+  "layout_and_navigation": {
+    "header": {
+      "type": "Sticky solid white header with 1px border-b border-slate-200 shadow-xs",
+      "left": "Logo: RAIN VISION with radar wave glyph + Tagline subtext",
+      "center": "Tabs / Navigation pills: Dashboard, Live Risk Map, Rainfall Forecast, Inundation Risk, Alerts, Data Sources, Offline Mode, Analytics, Settings",
+      "right": "Live Network Badge (Online/Offline) + Emergency Demo Mode CTA + GPS trigger button"
+    },
+    "grid_modes": {
+      "dashboard": "Bento High Density: Top summary bar with 5 urgent metrics -> Main 2-column split (Left: Map preview & Risk breakdown, Right: Hourly precipitation & Inundation timeline) -> Bottom: Nearby points & Active Geofence notice",
+      "map_view": "Full-height interactive GIS container with floating control overlays (Radius slider, City quick-jumps, Pan-India layers, clicked coordinates HUD)",
+      "forecast": "Chronological meteorological stream with Recharts dual-axis (Precipitation mm/h vs Probability %)"
+    }
+  },
+  "component_specifications": {
+    "EmergencyStatusBanner": {
+      "description": "Crucial top banner answering immediately: IS THERE DANGER? WHERE? WHEN? HOW SEVERE? WHAT SHOULD PEOPLE DO?",
+      "states": [
+        "Normal state: Muted slate/emerald reassuring card",
+        "Geofenced Alert state: Vivid high-contrast amber/rose border-2 card with concrete safety recommendations",
+        "Offline state: Amber warning card indicating cached operational mode & local alert engine active"
+      ]
+    },
+    "LeafletMapComponent": {
+      "description": "True interactive OpenStreetMap Leaflet integration with coordinates HUD, dynamic user circle marker, configurable radius ring (5/10/25/50 km), and surrounding grid points",
+      "pins": [
+        "Current GPS (Blue pulse + 'YOU ARE HERE')",
+        "Selected/Clicked pin (Amber pin with popover data)",
+        "Pan-India major city risk markers (Delhi, Mumbai, Bengaluru, Chennai, Hyderabad, Kolkata, Pune, Guwahati, Kochi, Ahmedabad, Lucknow, Patna, Srinagar, Bhubaneswar, Jaipur)"
+      ]
+    },
+    "RiskFusionEngineCard": {
+      "description": "Clear transparent breakdown of AI / Data Fusion weights: Rain (30%), Probability (20%), Accumulation (20%), NWP Model (15%), Cloud/Radar (5%), Vulnerability Proxy (10%)",
+      "disclaimer": "Prototype risk thresholds and weights require calibration against historical observations before operational deployment."
+    },
+    "InundationRiskCard": {
+      "description": "Prototype inundation metric card detailing surface water risk, hourly runoff trend, contributing factors",
+      "disclaimer": "This prototype does not provide validated street-level flood-depth prediction."
+    },
+    "EmergencyDemoPanel": {
+      "description": "Interactive jury controller stepping through: Normal -> Rainfall Increase -> Moderate -> High -> Extreme -> Alert Triggered -> Geofenced Warning -> Network Failure -> Offline Mode -> Cached Data + Local Alert Engine -> Network Recovery",
+      "buttons": [
+        "Start Scenario",
+        "Next Stage",
+        "Simulate Network Disconnect",
+        "Restore Network",
+        "Reset Scenario"
+      ]
+    },
+    "OfflineStatusBar": {
+      "description": "Detects real navigator.onLine and demo trigger, switches seamlessly to cached JSON, shows exact DATA AGE in minutes and Last Live Update timestamp"
+    },
+    "SmsFutureIntegrationModal": {
+      "description": "Transparent SMS Payload Ready dialog showing masked recipient (+91 98*** **420), payload text, and explicit 'SMS GATEWAY: NOT CONFIGURED (FUTURE INTEGRATION)' disclaimer"
+    }
+  },
+  "image_urls": {
+    "satellite_radar_storm": "https://images.unsplash.com/photo-1630260655695-cabd562b720a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwzfHxzYXRlbGxpdGUlMjB3ZWF0aGVyJTIwcmFkYXIlMjBzdG9ybSUyMG1hcHxlbnwwfHx8fDE3ODk1NzY3NDZ8MA&ixlib=rb-4.1.0&q=85",
+    "radar_dish_monitoring": "https://images.pexels.com/photos/29412941/pexels-photo-29412941.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "urban_monsoon_impact": "https://images.pexels.com/photos/26146700/pexels-photo-26146700.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "testing_and_attributes": {
+    "data_testid_rules": "All interactive buttons, input fields, tabs, metric chips, and status badges MUST include semantic kebab-case data-testid tags (e.g., data-testid='nav-tab-dashboard', data-testid='btn-emergency-demo', data-testid='status-network-badge', data-testid='input-search-location', data-testid='btn-refresh-location')"
+  },
+  "instructions_to_main_agent": [
+    "Build as a comprehensive single-page dashboard with robust sub-view switching (Dashboard, Live Risk Map, Rainfall Forecast, Inundation Risk, Alerts, Data Sources, Offline Mode, Analytics, Settings).",
+    "Ensure Open-Meteo real coordinates API calls run reliably for the active location (latitude, longitude) and recalculate deterministic risk based on the specified fusion formula.",
+    "Bengaluru (12.9716° N, 77.5946° E) is the primary default location with seamless browser Geolocation override.",
+    "Strictly honor the NO RANDOM LIVE RISK rule; keep live mode deterministic from API values, reserving step-by-step simulations strictly for the Emergency Demo Scenario.",
+    "Implement real window 'online'/'offline' event listeners and automatic localStorage synchronization for full offline resilience.",
+    "Ensure Leaflet maps render with standard OpenStreetMap tiles, accurate markers, custom pulsing user dot, and monitoring radius circle.",
+    "Always maintain explicit provenance badges (LIVE, FALLBACK, DEMO, SIMULATED, FUTURE, UNAVAILABLE) without falsifying IMD, ISRO, or SMS delivery."
+  ]
+}

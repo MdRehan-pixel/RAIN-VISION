@@ -1,0 +1,21 @@
+{
+  "passed": 11,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [],
+  "retest_needed": false,
+  "checks": [
+    {"criterion":"Dashboard communicates danger, active location, exact coordinates, risk score/category, rainfall, inundation, network, and data provenance","name":"dashboard-command-center","lane":"browser","status":"passed","evidence":"Dashboard shell rendered; danger-assessment, active-latitude 12.97160, active-longitude 77.59460, risk/network metrics and DEMO provenance badge were visible."},
+    {"criterion":"Location consistency through GPS fallback, search, and map interaction","name":"location-search-and-map-context","lane":"browser","status":"passed","evidence":"Map view searched Bengaluru and Mumbai through the UI; selected location panel updated to each result and map coordinate HUD rendered."},
+    {"criterion":"Live weather, forecast, NWP, spatial points, pan-India markers, and radar transparency","name":"forecast-and-provenance","lane":"browser","status":"passed","evidence":"Forecast page rendered current plus 1/3/6/24 hour metrics, forecast chart, NWP status and observed weather cards."},
+    {"criterion":"Live weather, forecast, NWP, spatial points, pan-India markers, and radar transparency","name":"weather-context-contracts","lane":"backend","status":"passed","evidence":"HTTP assertions passed for GET /api/spatial 200 (LIVE/FALLBACK envelope), GET /api/pan-india 200 (LIVE/FALLBACK envelope), and GET /api/radar 200 (LIVE/UNAVAILABLE)."},
+    {"criterion":"Deterministic risk fusion and prototype inundation","name":"deterministic-inundation-risk","lane":"browser","status":"passed","evidence":"Inundation risk, contributing factors, roadmap and validated street-level flood-depth disclaimer rendered."},
+    {"criterion":"Registration, geofenced alerts, browser notifications, and SMS honesty","name":"local-registration-and-alert-honesty","lane":"browser","status":"passed","evidence":"Local registration accepted test recipient, alerts page displayed recipient status, SMS payload ready and NOT CONFIGURED state."},
+    {"criterion":"Automatic offline/cache/recovery behavior","name":"offline-cache-recovery","lane":"browser","status":"passed","evidence":"Simulate network failure changed the same view to OFFLINE with cache/local alert messaging; restore returned to ONLINE."},
+    {"criterion":"Emergency demo and analytics/settings navigation","name":"emergency-demo-progression","lane":"browser","status":"passed","evidence":"Emergency demo panel progressed from normal through rainfall/moderate/high/extreme stages and reset rendered."},
+    {"criterion":"Emergency demo and analytics/settings navigation","name":"analytics-and-settings-controls","lane":"browser","status":"passed","evidence":"Risk and rainfall trend charts rendered; settings registration controls and radius 25 selection worked at narrow 390px viewport."},
+    {"criterion":"Responsive accessible command-center UI","name":"analytics-and-settings-controls","lane":"browser","status":"passed","evidence":"Narrow viewport settings flow remained usable with visible labeled registration and radius controls."},
+    {"criterion":"Dashboard communicates danger, active location, exact coordinates, risk score/category, rainfall, inundation, network, and data provenance","name":"forecast-contract","lane":"backend","status":"passed","evidence":"HTTP assertions passed for GET /api/forecast?latitude=12.9716&longitude=77.5946 200 with coordinate-keyed current/hourly data and LIVE/FALLBACK status; invalid latitude returned 422."},
+    {"criterion":"Location consistency through GPS fallback, search, and map interaction","name":"location-contract","lane":"backend","status":"passed","evidence":"HTTP assertions passed for GET /api/geocode?name=Bengaluru&countryCode=IN 200 with LIVE results envelope; blank name returned 422."}
+  ]
+}
