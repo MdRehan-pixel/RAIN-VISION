@@ -1,6 +1,6 @@
 import type { LocationState, RiskCategory } from "@/lib/types";
 
-export type View = "dashboard" | "map" | "forecast" | "inundation" | "alerts" | "sos" | "sources" | "offline" | "analytics" | "historical" | "settings";
+export type View = "dashboard" | "map" | "forecast" | "inundation" | "alerts" | "sources" | "offline" | "analytics" | "historical" | "settings";
 
 export const DEFAULT_LOCATION: LocationState = { name: "Bengaluru", state: "Karnataka", country: "India", latitude: 12.9716, longitude: 77.5946, source: "DEMO_FALLBACK" };
 
@@ -10,7 +10,6 @@ export const navItems: { view: View; label: string; path: string }[] = [
   { view: "forecast", label: "Rainfall Forecast", path: "/forecast" },
   { view: "inundation", label: "Inundation Risk", path: "/inundation" },
   { view: "alerts", label: "Alerts", path: "/alerts" },
-  { view: "sos", label: "SOS", path: "/sos" },
   { view: "sources", label: "Data Sources", path: "/sources" },
   { view: "offline", label: "Offline Mode", path: "/offline" },
   { view: "analytics", label: "Analytics", path: "/analytics" },

@@ -14,7 +14,6 @@ import SourcesView from "@/pages/rainvision/SourcesView";
 import OfflineView from "@/pages/rainvision/OfflineView";
 import AnalyticsView from "@/pages/rainvision/AnalyticsView";
 import SettingsView from "@/pages/rainvision/SettingsView";
-import SOSView from "@/pages/rainvision/SOSView";
 import type { Provenance } from "@/lib/types";
 
 const views: Record<View, (m: RainVisionModel) => React.ReactNode> = {
@@ -28,7 +27,6 @@ const views: Record<View, (m: RainVisionModel) => React.ReactNode> = {
   analytics: (m) => <AnalyticsView m={m} />,
   historical: () => <HistoricalReplay />,
   settings: (m) => <SettingsView m={m} />,
-  sos: () => <SOSView />,
 };
 
 /** Top-of-page data-mode badge: historical backtest, demo scenario, or the live/fallback status. */

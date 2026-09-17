@@ -1,4 +1,4 @@
-import { Check, ChevronRight, CloudRain, Droplets, Gauge, LocateFixed, MapPinned, RefreshCw, ShieldAlert, Wifi, WifiOff, type LucideIcon } from "lucide-react";
+import { Check, ChevronRight, CloudRain, Droplets, Gauge, LocateFixed, MapPinned, RefreshCw, ShieldAlert, Siren, Wifi, WifiOff, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import LeafletMap from "@/components/LeafletMap";
