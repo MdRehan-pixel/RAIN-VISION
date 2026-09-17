@@ -102,3 +102,36 @@ export async function savePushSubscription(
     return false;
   }
 }
+
+export async function sendPushNotification(
+  subscription: PushSubscription,
+  title: string,
+  body: string,
+  url = "/",
+): Promise<boolean> {
+  try {
+    const response = await fetch("/api/push/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subscription: subscription.toJSON(),
+        title,
+        body,
+        url,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Push send failed:", await response.text());
+      return false;
+    }
+
+    console.log("RAIN VISION Web Push sent.");
+    return true;
+  } catch (error) {
+    console.error("Push send request failed:", error);
+    return false;
+  }
+}

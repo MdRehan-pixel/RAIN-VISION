@@ -9,7 +9,7 @@ import { clearRainVisionStorage, getCacheSnapshot, getRegistration, isDemoOfflin
 import { makeFallbackForecast } from "@/lib/weather";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { DEFAULT_LOCATION, demoStages, riskRank, viewFromPath } from "@/pages/rainvision/config";
-import { savePushSubscription, subscribeToPush } from "@/lib/pushNotifications";
+import { savePushSubscription, sendPushNotification, subscribeToPush } from "@/lib/pushNotifications";
 import type { ForecastEnvelope, GeocodeResponse, HistoryPoint, LocationState, PanIndiaResponse, RadarResponse, RegisteredLocation, SmsAlertRequest, SmsConfigResponse, SmsDeliveryStatusResponse, SmsSendResponse, SpatialResponse } from "@/lib/types";
 
 const NOTIFICATION_COOLDOWN_MS = 10 * 60 * 1000;
@@ -163,19 +163,51 @@ export function useRainVision() {
   const { mutate: sendSms } = smsSendMutation;
 
   // ---- handlers ----
-  const setOffline = useCallback((value: boolean) => {
-    setDemoOffline(value);
-    setDemoOfflineStorage(value);
+  const setOffline = useCallback(async (value: boolean) => {
     if (value) {
-      notifyOfflineBackup();
+      let pushSent = false;
+
+      if (notificationsEnabled && typeof Notification !== "undefined" && Notification.permission === "granted") {
+        try {
+          const subscription = await subscribeToPush();
+
+          if (subscription) {
+            await savePushSubscription(subscription);
+
+            pushSent = await sendPushNotification(
+              subscription,
+              "RAIN VISION — SYSTEM OFFLINE",
+              "Initiating offline backup.",
+              "/",
+            );
+          }
+        } catch {
+          pushSent = false;
+        }
+      }
+
+      if (!pushSent) {
+        await notifyOfflineBackup();
+      }
+
+      setDemoOffline(true);
+      setDemoOfflineStorage(true);
+
       toast.warning("Offline mode activated", {
         description: "Latest known data remains available; live requests are paused.",
       });
       return;
     }
-    toast.success("Network restored", { description: "Refreshing live data…" });
+
+    setDemoOffline(false);
+    setDemoOfflineStorage(false);
+
+    toast.success("Network restored", {
+      description: "Refreshing live data…",
+    });
+
     refreshLive();
-  }, [refreshLive]);
+  }, [notificationsEnabled, refreshLive]);
   const selectLocation = useCallback((next: LocationState) => { setLocation(next); toast.success("Monitoring location updated", { description: `${next.name} · ${next.latitude.toFixed(4)}, ${next.longitude.toFixed(4)}` }); navigate("/"); }, [navigate]);
   const selectMapPoint = useCallback((latitude: number, longitude: number) => selectLocation({ name: "Selected map point", latitude, longitude, source: "MAP" }), [selectLocation]);
   const useMyLocation = useCallback(() => {
