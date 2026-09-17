@@ -15,6 +15,21 @@ import type { ForecastEnvelope, GeocodeResponse, HistoryPoint, LocationState, Pa
 const NOTIFICATION_COOLDOWN_MS = 10 * 60 * 1000;
 const LAST_NOTIFICATION_KEY = "rain-vision-last-notification";
 const LAST_SMS_KEY = "rain-vision-last-sms-key";
+
+const notifyOfflineBackup = () => {
+  if (typeof Notification === "undefined") return;
+  if (Notification.permission !== "granted") return;
+
+  try {
+    new Notification("RAIN VISION — SYSTEM OFFLINE", {
+      body: "Initiating offline backup. Latest known data remains available.",
+      tag: "rain-vision-offline",
+      requireInteraction: true,
+    });
+  } catch {
+    // Never let notification failures affect the monitoring application.
+  }
+};
 const E164 = /^\+[1-9]\d{7,14}$/;
 const GPS_OPTIONS: PositionOptions = { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 };
 
@@ -47,7 +62,12 @@ export function useRainVision() {
   const currentView = viewFromPath(route.pathname);
   const networkOnline = useNetworkStatus({
     onOnline: () => { if (!demoOffline) { toast.success("Network restored", { description: "Refreshing live data…" }); refreshLive(); } },
-    onOffline: () => toast.warning("Network offline", { description: "Automatic offline mode is active." }),
+    onOffline: () => {
+      notifyOfflineBackup();
+      toast.warning("Network offline", {
+        description: "Automatic offline mode is active.",
+      });
+    },
   });
   const isOnline = networkOnline && !demoOffline;
   // Historical backtest mode must not mix live weather into the replay, so live fetching pauses on that view.
@@ -127,7 +147,13 @@ export function useRainVision() {
   const setOffline = useCallback((value: boolean) => {
     setDemoOffline(value);
     setDemoOfflineStorage(value);
-    if (value) { toast.warning("Offline mode activated", { description: "Latest known data remains available; live requests are paused." }); return; }
+    if (value) {
+      notifyOfflineBackup();
+      toast.warning("Offline mode activated", {
+        description: "Latest known data remains available; live requests are paused.",
+      });
+      return;
+    }
     toast.success("Network restored", { description: "Refreshing live data…" });
     refreshLive();
   }, [refreshLive]);
