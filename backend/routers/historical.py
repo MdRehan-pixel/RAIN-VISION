@@ -13,7 +13,7 @@ from models.historical import HistoricalIncident, IncidentListResponse, Incident
 
 router = APIRouter(prefix="/historical")
 
-DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "historical"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "historical"
 
 
 @lru_cache(maxsize=8)

@@ -1,0 +1,1 @@
+mkdir -p backend/data/historical && cp data/historical/chennai_2015.json backend/data/historical/

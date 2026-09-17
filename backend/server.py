@@ -11,6 +11,7 @@ import httpx
 from routers.weather import router as weather_router
 from routers.sms import router as sms_router
 from routers.historical import router as historical_router
+from routers.push import router as push_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -50,6 +51,7 @@ async def root():
 api_router.include_router(weather_router)
 api_router.include_router(sms_router)
 api_router.include_router(historical_router)
+api_router.include_router(push_router)
 
 app.add_middleware(
     CORSMiddleware,

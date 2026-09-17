@@ -17,10 +17,7 @@ export const navItems: { view: View; label: string; path: string }[] = [
   { view: "settings", label: "Settings", path: "/settings" },
 ];
 
-export const demoStages = ["NORMAL", "RAINFALL INCREASE", "MODERATE", "HIGH", "EXTREME", "ALERT TRIGGERED", "GEOFENCED WARNING", "NETWORK FAILURE", "CACHED DATA + LOCAL ALERT ENGINE", "NETWORK RESTORED"];
-/** Demo stage indices that simulate a network blackout / restoration. */
-export const DEMO_OFFLINE_FROM = 7;
-export const DEMO_RESTORE_STAGE = 9;
+export const demoStages = ["NORMAL", "RAINFALL INCREASE", "MODERATE RISK", "HIGH RISK", "EXTREME RISK", "ALERT TRIGGERED", "GEOFENCED WARNING"];
 
 export const viewFromPath = (pathname: string): View => navItems.find((item) => item.path === pathname)?.view ?? "dashboard";
 export const riskRank: Record<RiskCategory, number> = { LOW: 0, MODERATE: 1, HIGH: 2, EXTREME: 3 };

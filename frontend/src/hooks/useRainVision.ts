@@ -8,7 +8,8 @@ import { calculateRisk, demoRisk } from "@/lib/risk";
 import { clearRainVisionStorage, getCacheSnapshot, getRegistration, isDemoOffline, saveCacheSnapshot, saveRegistration, setDemoOfflineStorage } from "@/lib/storage";
 import { makeFallbackForecast } from "@/lib/weather";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import { DEFAULT_LOCATION, DEMO_OFFLINE_FROM, DEMO_RESTORE_STAGE, demoStages, riskRank, viewFromPath } from "@/pages/rainvision/config";
+import { DEFAULT_LOCATION, demoStages, riskRank, viewFromPath } from "@/pages/rainvision/config";
+import { savePushSubscription, subscribeToPush } from "@/lib/pushNotifications";
 import type { ForecastEnvelope, GeocodeResponse, HistoryPoint, LocationState, PanIndiaResponse, RadarResponse, RegisteredLocation, SmsAlertRequest, SmsConfigResponse, SmsDeliveryStatusResponse, SmsSendResponse, SpatialResponse } from "@/lib/types";
 
 const NOTIFICATION_COOLDOWN_MS = 10 * 60 * 1000;
@@ -141,12 +142,36 @@ export function useRainVision() {
   const resetDemo = useCallback(() => { setDemoStage(null); setOffline(false); }, [setOffline]);
   const runSearch = () => { if (searchInput.trim().length < 2) { toast.error("Enter at least two characters to search"); return; } setSearchTerm(searchInput.trim()); };
   const enableNotifications = async () => {
-    if (typeof Notification === "undefined") { toast.error("Browser notifications are not supported"); return; }
-    const granted = (await Notification.requestPermission()) === "granted";
-    setNotificationsEnabled(granted);
-    if (granted) toast.success("Browser alerts enabled", { description: "High and extreme conditions will trigger a device notification." });
-    else toast.warning("Browser alerts not enabled", { description: "In-app alerts remain available." });
-  };
+  if (typeof Notification === "undefined") {
+    toast.error("Browser notifications are not supported");
+    return;
+  }
+
+  const subscription = await subscribeToPush();
+
+  if (!subscription) {
+    toast.warning("Push notifications were not enabled", {
+      description: "Please allow notifications for RAIN VISION.",
+    });
+    return;
+  }
+  const saved = await savePushSubscription(subscription);
+  if (!saved) {
+  toast.error("Could not register this device", {
+    description: "Push notifications could not be connected to the RAIN VISION server.",
+  });
+  return;
+}
+
+
+  setNotificationsEnabled(true);
+
+  toast.success("Push notifications enabled", {
+    description: "This device can now receive RAIN VISION warnings.",
+  });
+
+  console.log("RAIN VISION push subscription:", subscription.toJSON());
+};
   const registerLocation = (event: FormEvent) => {
     event.preventDefault();
     if (!registrationForm.name || !E164.test(registrationForm.phone)) { toast.error("Use a name and E.164 phone number", { description: "Example: +919876543210" }); return; }
@@ -171,13 +196,16 @@ export function useRainVision() {
   }, [liveLocation]);
   useEffect(() => {
     if (demoStage === null) return;
-    const timer = window.setInterval(() => setDemoStage((stage) => (stage === null || stage >= demoStages.length - 1 ? stage : stage + 1)), 1800);
+
+    const timer = window.setInterval(() => {
+      setDemoStage((stage) =>
+        stage === null || stage >= demoStages.length - 1 ? stage : stage + 1
+      );
+    }, 5000);
+
     return () => window.clearInterval(timer);
   }, [demoStage]);
-  useEffect(() => {
-    if (demoStage !== null && demoStage >= DEMO_OFFLINE_FROM && demoStage < DEMO_RESTORE_STAGE) setOffline(true);
-    if (demoStage === DEMO_RESTORE_STAGE) setOffline(false);
-  }, [demoStage, setOffline]);
+
   // Every successful live snapshot is cached so offline mode can show latest known data after a refresh.
   useEffect(() => {
     const liveForecast = forecastQuery.data;
