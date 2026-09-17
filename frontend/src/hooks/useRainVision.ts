@@ -219,12 +219,30 @@ export function useRainVision() {
   }, [currentRainfall, demoStage, forecastQuery.data, isOnline, location, radarQuery.data, risk, spatialQuery.data]);
   useEffect(() => {
     if (!activeAlert || !notificationsEnabled || typeof Notification === "undefined") return;
+
+    const showBrowserWarning = () => {
+      new Notification("RAIN VISION WARNING", {
+        body: `${risk.category} rainfall and inundation risk near ${location.name}. Risk ${risk.score}/100.`,
+      });
+      toast.error("Browser warning triggered", {
+        description: `${risk.category} risk detected near ${location.name}.`,
+      });
+    };
+
+    // Demo mode: repeatedly show the warning every 5 seconds for a strong jury demonstration.
+    if (demoStage !== null) {
+      showBrowserWarning();
+      const timer = window.setInterval(showBrowserWarning, 5000);
+      return () => window.clearInterval(timer);
+    }
+
+    // Live mode: retain the normal 10-minute notification cooldown.
     const last = Number(localStorage.getItem(LAST_NOTIFICATION_KEY) ?? 0);
     if (Date.now() - last < NOTIFICATION_COOLDOWN_MS) return;
-    new Notification("RAIN VISION WARNING", { body: `${risk.category} rainfall and inundation risk near ${location.name}. Risk ${risk.score}/100.` });
+
+    showBrowserWarning();
     localStorage.setItem(LAST_NOTIFICATION_KEY, String(Date.now()));
-    toast.error("Browser warning triggered", { description: `${risk.category} risk detected near ${location.name}.` });
-  }, [activeAlert, location.name, notificationsEnabled, risk.category, risk.score]);
+  }, [activeAlert, demoStage, location.name, notificationsEnabled, risk.category, risk.score]);
   // Automatic SMS only for live HIGH/EXTREME with a Twilio-verified sender; never in demo or historical mode.
   useEffect(() => {
     const config = smsConfigQuery.data;
