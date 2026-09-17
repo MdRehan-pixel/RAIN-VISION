@@ -16,18 +16,37 @@ const NOTIFICATION_COOLDOWN_MS = 10 * 60 * 1000;
 const LAST_NOTIFICATION_KEY = "rain-vision-last-notification";
 const LAST_SMS_KEY = "rain-vision-last-sms-key";
 
-const notifyOfflineBackup = () => {
+const notifyOfflineBackup = async () => {
   if (typeof Notification === "undefined") return;
   if (Notification.permission !== "granted") return;
 
+  const title = "RAIN VISION — SYSTEM OFFLINE";
+  const body = "Initiating offline backup. Latest known data remains available.";
+
   try {
-    new Notification("RAIN VISION — SYSTEM OFFLINE", {
-      body: "Initiating offline backup. Latest known data remains available.",
+    if ("serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.showNotification(title, {
+        body,
+        tag: "rain-vision-offline",
+        requireInteraction: true,
+        icon: "/favicon.svg",
+        badge: "/favicon.svg",
+      });
+      return;
+    }
+  } catch {
+    // Fall back to the browser notification API.
+  }
+
+  try {
+    new Notification(title, {
+      body,
       tag: "rain-vision-offline",
       requireInteraction: true,
     });
   } catch {
-    // Never let notification failures affect the monitoring application.
+    // Notification failure must never break RAIN VISION.
   }
 };
 const E164 = /^\+[1-9]\d{7,14}$/;

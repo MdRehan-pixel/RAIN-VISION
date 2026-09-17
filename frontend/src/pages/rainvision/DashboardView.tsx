@@ -24,6 +24,16 @@ export default function DashboardView({ m }: { m: RainVisionModel }) {
   const banner = bannerFor(activeAlert, showOffline, risk);
   const simulateOffline = () => setOffline(true);
   return <>
+    <a
+      href="tel:112"
+      data-testid="button-sos-call"
+      aria-label="SOS emergency call"
+      title="SOS · Emergency call"
+      className="fixed bottom-6 right-6 z-50 grid h-16 w-16 place-items-center rounded-full bg-rose-600 text-white shadow-[0_0_0_6px_rgba(244,63,94,0.12),0_0_32px_rgba(244,63,94,0.5)] ring-4 ring-rose-200/80 transition hover:scale-105 hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-300 animate-pulse"
+    >
+      <Siren size={28} />
+      <span className="sr-only">SOS emergency call</span>
+    </a>
     <section data-testid="emergency-status-banner" className={`mb-5 overflow-hidden rounded-2xl border ${banner.frame}`}><div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-start gap-3"><div className={`mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl ${banner.iconFrame}`}><banner.Icon size={20} /></div><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">{banner.eyebrow}</p><h2 data-testid="danger-assessment" className="mt-1 text-lg font-semibold text-slate-950">{banner.title}</h2><p className="mt-1 max-w-2xl text-sm text-slate-600">{banner.body}</p></div></div><div className="flex shrink-0 items-center gap-2"><ProvenanceBadge status={sourceMode} /><Button data-testid="button-view-alerts" variant="outline" size="sm" onClick={() => navigate("/alerts")}>View alerts <ChevronRight size={14} /></Button></div></div></section>
     <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5"><MetricCard label="Risk score" value={`${risk.score}/100`} detail={risk.category} icon={Gauge} tone={activeAlert ? "rose" : "blue"} /><MetricCard label="Precipitation" value={`${formatNumber(current.precipitation ?? current.rain)} mm`} detail="Current intensity" icon={Droplets} tone="blue" /><MetricCard label="Next 6 hours" value={`${formatNumber(accumulations.six)} mm`} detail="Forecast accumulation" icon={CloudRain} tone="amber" /><MetricCard label="Inundation" value={`${risk.inundation.score}/100`} detail={risk.inundation.category} icon={Droplets} tone={risk.inundation.score >= 50 ? "rose" : "slate"} /><MetricCard label="Network" value={showOffline ? "OFFLINE" : "ONLINE"} detail={showOffline ? "Cache active" : "Live requests active"} icon={showOffline ? WifiOff : Wifi} tone={showOffline ? "amber" : "slate"} /></div>
     <div className="grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
