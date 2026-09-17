@@ -25,13 +25,24 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 
 export async function subscribeToPush(): Promise<PushSubscription | null> {
   try {
-    const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+    let publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
-    if (!publicKey) {
-      console.error("VITE_VAPID_PUBLIC_KEY is missing.");
-      return null;
-    }
+if (!publicKey) {
+  const configResponse = await fetch("/api/push/config");
 
+  if (!configResponse.ok) {
+    console.error("Could not load push notification configuration.");
+    return null;
+  }
+
+  const config = await configResponse.json();
+  publicKey = config.public_key;
+
+  if (!publicKey) {
+    console.error("VAPID public key is not configured on the server.");
+    return null;
+  }
+}
     const registration = await registerPushServiceWorker();
 
     if (!registration) {
