@@ -135,3 +135,1508 @@
 
 button, a, input { transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
 button:active { transform: translateY(1px); }
+/* RAIN VISION — lightweight ambient color */
+.rain-dashboard {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(56, 189, 248, 0.16), transparent 28%),
+    radial-gradient(circle at 92% 10%, rgba(129, 140, 248, 0.14), transparent 30%),
+    radial-gradient(circle at 50% 95%, rgba(34, 211, 238, 0.08), transparent 32%),
+    linear-gradient(135deg, #f7fcff 0%, #eef8ff 52%, #f5f3ff 100%);
+}
+
+.dark .rain-dashboard {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(34, 211, 238, 0.12), transparent 28%),
+    radial-gradient(circle at 92% 10%, rgba(99, 102, 241, 0.13), transparent 30%),
+    radial-gradient(circle at 50% 95%, rgba(14, 116, 144, 0.08), transparent 32%),
+    linear-gradient(135deg, #07111f 0%, #0a1728 52%, #10152a 100%);
+}
+
+.rain-hero-panel {
+  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 26px;
+}
+
+.dark .rain-hero-panel {
+  background: rgba(13, 28, 48, 0.32);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+
+/* RAIN VISION geometric ambient accents
+   Static only — intentionally lightweight. */
+
+.rain-hero-panel {
+  position: relative;
+}
+
+.rain-hero-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.rain-square {
+  position: absolute;
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  transform: rotate(18deg);
+  opacity: 0.72;
+}
+
+.rain-square-cyan {
+  top: 24px;
+  right: 30%;
+  background: #22d3ee;
+}
+
+.rain-square-purple {
+  top: 42%;
+  right: 7%;
+  width: 20px;
+  height: 20px;
+  background: #8b5cf6;
+  transform: rotate(28deg);
+}
+
+.rain-square-blue {
+  bottom: 22px;
+  right: 22%;
+  width: 10px;
+  height: 10px;
+  background: #3b82f6;
+  transform: rotate(45deg);
+}
+
+.rain-square-amber {
+  top: 30%;
+  right: 15%;
+  width: 11px;
+  height: 11px;
+  background: #f59e0b;
+  transform: rotate(12deg);
+}
+
+.rain-square-white {
+  bottom: 24px;
+  right: 8%;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(100,116,139,.22);
+  background: rgba(255,255,255,.65);
+  transform: rotate(32deg);
+}
+
+.rain-square-pink {
+  top: 18%;
+  right: 4%;
+  width: 9px;
+  height: 9px;
+  background: #fb7185;
+  transform: rotate(45deg);
+}
+
+.dark .rain-square-cyan {
+  background: #22d3ee;
+}
+
+.dark .rain-square-purple {
+  background: #a78bfa;
+}
+
+.dark .rain-square-blue {
+  background: #60a5fa;
+}
+
+.dark .rain-square-amber {
+  background: #fbbf24;
+}
+
+.dark .rain-square-white {
+  border-color: rgba(148,163,184,.22);
+  background: rgba(255,255,255,.10);
+}
+
+.dark .rain-square-pink {
+  background: #fb7185;
+}
+
+@media (max-width: 900px) {
+  .rain-square-purple {
+    right: 4%;
+  }
+
+  .rain-square-amber,
+  .rain-square-pink {
+    display: none;
+  }
+}
+
+
+/* RAIN VISION — premium information metric cards */
+
+.rain-metric-card {
+  position: relative;
+  min-height: 156px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.20);
+  border-radius: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.rain-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.rain-metric-card::after {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  right: -42px;
+  bottom: -48px;
+  border-radius: 28px;
+  transform: rotate(24deg);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.rain-metric-risk {
+  border-color: rgba(244, 63, 94, 0.24);
+  background: linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,241,244,.78));
+}
+
+.rain-metric-danger {
+  box-shadow:
+    0 10px 30px rgba(244, 63, 94, 0.10),
+    inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+.rain-metric-blue {
+  border-color: rgba(14, 165, 233, 0.20);
+  background: linear-gradient(145deg, rgba(255,255,255,.86), rgba(239,248,255,.78));
+}
+
+.rain-metric-purple {
+  border-color: rgba(139, 92, 246, 0.20);
+  background: linear-gradient(145deg, rgba(255,255,255,.86), rgba(247,243,255,.80));
+}
+
+.rain-metric-amber {
+  border-color: rgba(245, 158, 11, 0.22);
+  background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(255,249,235,.82));
+}
+
+.rain-metric-green {
+  border-color: rgba(16, 185, 129, 0.20);
+  background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(239,253,248,.82));
+}
+
+.rain-metric-offline {
+  border-color: rgba(245, 158, 11, 0.24);
+  background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(255,249,235,.82));
+}
+
+.rain-metric-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.rain-metric-value {
+  margin-top: 5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: #0f172a;
+}
+
+.rain-metric-value span {
+  margin-left: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #64748b;
+}
+
+.rain-network-value {
+  font-size: 22px;
+  letter-spacing: -.02em;
+}
+
+.rain-metric-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 13px;
+}
+
+.rain-icon-rose {
+  color: #e11d48;
+  background: #ffe4e9;
+}
+
+.rain-icon-blue {
+  color: #0284c7;
+  background: #e0f2fe;
+}
+
+.rain-icon-purple {
+  color: #7c3aed;
+  background: #ede9fe;
+}
+
+.rain-icon-amber {
+  color: #d97706;
+  background: #fef3c7;
+}
+
+.rain-icon-green {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.rain-metric-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .10em;
+}
+
+.rain-status-rose {
+  color: #be123c;
+  background: #ffe4e9;
+}
+
+.rain-status-blue {
+  color: #0369a1;
+  background: #e0f2fe;
+}
+
+.rain-status-purple {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+.rain-status-amber {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.rain-status-green {
+  color: #047857;
+  background: #d1fae5;
+}
+
+.rain-metric-small {
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+.rain-metric-caption {
+  margin-top: 8px;
+  font-size: 10px;
+  line-height: 1.25;
+  color: #64748b;
+}
+
+.rain-segment-bar {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  height: 7px;
+}
+
+.rain-segment-bar span {
+  border-radius: 3px;
+  background: #e2e8f0;
+}
+
+.rain-segment-bar span.active.rose {
+  background: #f43f5e;
+}
+
+.rain-segment-bar span.active.amber {
+  background: #f59e0b;
+}
+
+.rain-mini-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 24px;
+}
+
+.rain-mini-bars span {
+  flex: 1;
+  min-width: 2px;
+  max-width: 8px;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(to top, #38bdf8, #bae6fd);
+}
+
+.rain-mini-bars.purple span {
+  background: linear-gradient(to top, #8b5cf6, #ddd6fe);
+}
+
+.rain-mini-bars.green span {
+  background: linear-gradient(to top, #10b981, #a7f3d0);
+}
+
+.dark .rain-metric-card {
+  background: rgba(15, 28, 46, 0.72);
+  border-color: rgba(255,255,255,.09);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.dark .rain-metric-risk {
+  background: linear-gradient(145deg, rgba(28,22,34,.82), rgba(42,20,30,.70));
+}
+
+.dark .rain-metric-blue {
+  background: linear-gradient(145deg, rgba(15,30,46,.82), rgba(11,39,58,.70));
+}
+
+.dark .rain-metric-purple {
+  background: linear-gradient(145deg, rgba(24,20,42,.82), rgba(37,24,65,.70));
+}
+
+.dark .rain-metric-amber,
+.dark .rain-metric-offline {
+  background: linear-gradient(145deg, rgba(35,29,19,.82), rgba(55,39,12,.68));
+}
+
+.dark .rain-metric-green {
+  background: linear-gradient(145deg, rgba(15,34,31,.82), rgba(12,52,43,.68));
+}
+
+.dark .rain-metric-value {
+  color: #f8fafc;
+}
+
+.dark .rain-metric-value span,
+.dark .rain-metric-caption,
+.dark .rain-metric-small {
+  color: #94a3b8;
+}
+
+.dark .rain-segment-bar span {
+  background: rgba(148,163,184,.18);
+}
+
+@media (max-width: 640px) {
+  .rain-metric-card {
+    min-height: 145px;
+    padding: 13px;
+  }
+
+  .rain-metric-value {
+    font-size: 23px;
+  }
+
+  .rain-metric-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .rain-metric-small {
+    display: none;
+  }
+}
+
+
+/* RAIN VISION — CARD POLISH V2 */
+
+.rain-metric-card {
+  isolation: isolate;
+  border-radius: 22px;
+  min-height: 162px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1),
+              box-shadow 220ms ease,
+              border-color 220ms ease;
+}
+
+.rain-metric-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(255,255,255,.75), transparent 34%),
+    linear-gradient(135deg, rgba(255,255,255,.38), transparent 58%);
+  opacity: .9;
+}
+
+.rain-metric-card::after {
+  content: "";
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  right: -58px;
+  bottom: -65px;
+  border-radius: 34px;
+  transform: rotate(28deg);
+  pointer-events: none;
+  opacity: .18;
+}
+
+.rain-metric-risk::after { background: #fb7185; }
+.rain-metric-blue::after { background: #38bdf8; }
+.rain-metric-purple::after { background: #a78bfa; }
+.rain-metric-amber::after,
+.rain-metric-offline::after { background: #fbbf24; }
+.rain-metric-green::after { background: #34d399; }
+
+.rain-metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 18px 38px rgba(15,23,42,.09),
+    0 4px 12px rgba(15,23,42,.035),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.rain-metric-risk:hover { border-color: rgba(244,63,94,.38); }
+.rain-metric-blue:hover { border-color: rgba(14,165,233,.34); }
+.rain-metric-purple:hover { border-color: rgba(139,92,246,.34); }
+.rain-metric-amber:hover,
+.rain-metric-offline:hover { border-color: rgba(245,158,11,.38); }
+.rain-metric-green:hover { border-color: rgba(16,185,129,.34); }
+
+.rain-metric-label {
+  font-size: 9px;
+  letter-spacing: .20em;
+  font-weight: 800;
+}
+
+.rain-metric-value {
+  font-size: 29px;
+  line-height: .95;
+  letter-spacing: -.055em;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.rain-metric-value span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rain-network-value {
+  font-size: 23px;
+  letter-spacing: -.035em;
+}
+
+.rain-metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.72);
+  box-shadow:
+    0 7px 16px rgba(15,23,42,.07),
+    inset 0 1px 0 rgba(255,255,255,.8);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.rain-metric-card:hover .rain-metric-icon {
+  transform: translateY(-2px) rotate(-2deg);
+  box-shadow:
+    0 10px 20px rgba(15,23,42,.10),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.rain-metric-status {
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+  font-size: 8px;
+  letter-spacing: .12em;
+}
+
+.rain-mini-bars {
+  height: 26px;
+  opacity: .92;
+}
+
+.rain-mini-bars span {
+  border-radius: 4px 4px 1px 1px;
+  transition: transform 180ms ease;
+}
+
+.rain-metric-card:hover .rain-mini-bars span {
+  transform: translateY(-1px);
+}
+
+.rain-segment-bar span {
+  border-radius: 999px;
+  transition: transform 180ms ease;
+}
+
+.rain-metric-card:hover .rain-segment-bar span.active {
+  transform: scaleY(1.18);
+}
+
+.dark .rain-metric-card {
+  backdrop-filter: blur(20px) saturate(125%);
+  -webkit-backdrop-filter: blur(20px) saturate(125%);
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.055);
+}
+
+.dark .rain-metric-card::before {
+  background:
+    radial-gradient(circle at 90% 5%, rgba(255,255,255,.07), transparent 35%),
+    linear-gradient(135deg, rgba(255,255,255,.035), transparent 58%);
+}
+
+.dark .rain-metric-card:hover {
+  box-shadow:
+    0 20px 42px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+@media (max-width: 640px) {
+  .rain-metric-card {
+    min-height: 148px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .rain-metric-value {
+    font-size: 24px;
+  }
+
+  .rain-network-value {
+    font-size: 20px;
+  }
+
+  .rain-metric-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 12px;
+  }
+}
+
+
+/* RAIN VISION — DATA VISUALIZATION POLISH */
+
+.rain-metric-card {
+  --card-glow: rgba(56, 189, 248, .16);
+}
+
+.rain-metric-risk {
+  --card-glow: rgba(244, 63, 94, .18);
+}
+
+.rain-metric-blue {
+  --card-glow: rgba(14, 165, 233, .18);
+}
+
+.rain-metric-purple {
+  --card-glow: rgba(139, 92, 246, .18);
+}
+
+.rain-metric-amber {
+  --card-glow: rgba(245, 158, 11, .18);
+}
+
+.rain-metric-green {
+  --card-glow: rgba(16, 185, 129, .18);
+}
+
+/* subtle metric glow */
+.rain-metric-value {
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+
+.rain-metric-risk .rain-metric-value {
+  text-shadow: 0 2px 14px rgba(244,63,94,.10);
+}
+
+.rain-metric-blue .rain-metric-value {
+  text-shadow: 0 2px 14px rgba(14,165,233,.10);
+}
+
+.rain-metric-purple .rain-metric-value {
+  text-shadow: 0 2px 14px rgba(139,92,246,.10);
+}
+
+.rain-metric-amber .rain-metric-value {
+  text-shadow: 0 2px 14px rgba(245,158,11,.10);
+}
+
+/* risk meter becomes more substantial */
+.rain-metric-risk .rain-segment-bar,
+.rain-metric-amber .rain-segment-bar {
+  padding: 1px 0;
+  height: 8px;
+}
+
+.rain-metric-risk .rain-segment-bar span.active.rose {
+  box-shadow: 0 1px 5px rgba(244,63,94,.28);
+}
+
+.rain-metric-amber .rain-segment-bar span.active.amber {
+  box-shadow: 0 1px 5px rgba(245,158,11,.28);
+}
+
+/* rainfall bars */
+.rain-metric-blue .rain-mini-bars span {
+  background: linear-gradient(
+    to top,
+    #0ea5e9 0%,
+    #38bdf8 55%,
+    #bae6fd 100%
+  );
+  box-shadow: 0 2px 7px rgba(14,165,233,.16);
+}
+
+.rain-metric-purple .rain-mini-bars span {
+  background: linear-gradient(
+    to top,
+    #7c3aed 0%,
+    #8b5cf6 55%,
+    #ddd6fe 100%
+  );
+  box-shadow: 0 2px 7px rgba(139,92,246,.16);
+}
+
+/* network activity */
+.rain-metric-green .rain-mini-bars span {
+  background: linear-gradient(
+    to top,
+    #059669 0%,
+    #10b981 55%,
+    #a7f3d0 100%
+  );
+  box-shadow: 0 2px 7px rgba(16,185,129,.16);
+}
+
+/* live network indicator */
+.rain-metric-green .rain-metric-status {
+  position: relative;
+}
+
+.rain-metric-green .rain-metric-status::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16,185,129,.10);
+  animation: rain-network-pulse 2s ease-in-out infinite;
+}
+
+@keyframes rain-network-pulse {
+  0%, 100% {
+    opacity: .65;
+    transform: scale(.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* forecast card gets a subtle data glow */
+.rain-metric-purple::before {
+  background:
+    radial-gradient(
+      circle at 85% 10%,
+      rgba(167,139,250,.16),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.40),
+      transparent 58%
+    );
+}
+
+/* risk card gets a slightly stronger warning atmosphere */
+.rain-metric-risk::before {
+  background:
+    radial-gradient(
+      circle at 86% 8%,
+      rgba(251,113,133,.13),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.42),
+      transparent 58%
+    );
+}
+
+/* inundation warning atmosphere */
+.rain-metric-amber::before {
+  background:
+    radial-gradient(
+      circle at 86% 8%,
+      rgba(251,191,36,.14),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.42),
+      transparent 58%
+    );
+}
+
+/* dark mode — retain restrained glow */
+.dark .rain-metric-risk .rain-metric-value {
+  text-shadow: 0 2px 18px rgba(244,63,94,.16);
+}
+
+.dark .rain-metric-blue .rain-metric-value {
+  text-shadow: 0 2px 18px rgba(14,165,233,.15);
+}
+
+.dark .rain-metric-purple .rain-metric-value {
+  text-shadow: 0 2px 18px rgba(139,92,246,.16);
+}
+
+.dark .rain-metric-amber .rain-metric-value {
+  text-shadow: 0 2px 18px rgba(245,158,11,.16);
+}
+
+
+/* =========================================================
+   RAIN VISION — MAP + INTELLIGENCE PANEL POLISH
+   Visual-only — functionality untouched
+   ========================================================= */
+
+/* Shared dashboard glass panels */
+.rain-glass {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, .18) !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.82),
+      rgba(248,250,252,.68)
+    ) !important;
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+
+  box-shadow:
+    0 10px 28px rgba(15,23,42,.045),
+    inset 0 1px 0 rgba(255,255,255,.82) !important;
+
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+/* soft light across the top edge */
+.rain-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+
+  background:
+    radial-gradient(
+      circle at 92% 0%,
+      rgba(56,189,248,.08),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.28),
+      transparent 48%
+    );
+}
+
+/* ---------------------------------------------------------
+   LIVE MAP
+   --------------------------------------------------------- */
+
+[data-testid="dashboard-map-card"] {
+  min-height: 420px;
+}
+
+[data-testid="dashboard-map-card"]:hover {
+  border-color: rgba(14,165,233,.24) !important;
+
+  box-shadow:
+    0 14px 34px rgba(15,23,42,.065),
+    inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+[data-testid="dashboard-map-card"] > div:first-child {
+  position: relative;
+  z-index: 2;
+  background: rgba(255,255,255,.22);
+}
+
+[data-testid="dashboard-map-card"] .text-lg {
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+
+[data-testid="dashboard-map-card"] .text-sky-700 {
+  filter: drop-shadow(0 2px 5px rgba(14,165,233,.14));
+}
+
+/* map container gets a premium frame */
+[data-testid="dashboard-map-card"] .leaflet-container {
+  border-radius: 18px;
+  overflow: hidden;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(15,23,42,.06),
+    0 8px 22px rgba(15,23,42,.05);
+}
+
+/* ---------------------------------------------------------
+   ACTIVE LOCATION
+   --------------------------------------------------------- */
+
+[data-testid="location-summary-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.88),
+      rgba(241,248,255,.72)
+    ) !important;
+}
+
+[data-testid="location-summary-card"] .bg-sky-50 {
+  border: 1px solid rgba(14,165,233,.10);
+
+  box-shadow:
+    0 5px 12px rgba(14,165,233,.08),
+    inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+[data-testid="location-summary-card"] [data-testid="active-latitude"],
+[data-testid="location-summary-card"] [data-testid="active-longitude"] {
+  font-size: 12px;
+  letter-spacing: -.02em;
+}
+
+[data-testid="location-summary-card"] .grid.grid-cols-2 > div {
+  border: 1px solid rgba(148,163,184,.10);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(248,250,252,.86),
+      rgba(241,245,249,.62)
+    ) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+/* refresh location button */
+[data-testid="button-refresh-location"] {
+  box-shadow:
+    0 5px 12px rgba(15,23,42,.10),
+    inset 0 1px 0 rgba(255,255,255,.08);
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+[data-testid="button-refresh-location"]:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 16px rgba(15,23,42,.14),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+/* ---------------------------------------------------------
+   FUSION RISK ENGINE
+   --------------------------------------------------------- */
+
+[data-testid="risk-fusion-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.90),
+      rgba(250,247,255,.72)
+    ) !important;
+}
+
+[data-testid="risk-fusion-card"]::before {
+  background:
+    radial-gradient(
+      circle at 94% 2%,
+      rgba(139,92,246,.10),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.30),
+      transparent 52%
+    );
+}
+
+[data-testid="risk-fusion-card"] .text-lg {
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+
+[data-testid="risk-fusion-card"] .border-t {
+  border-color: rgba(148,163,184,.16) !important;
+}
+
+/* ---------------------------------------------------------
+   DARK MODE
+   --------------------------------------------------------- */
+
+.dark .rain-glass {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15,28,46,.82),
+      rgba(12,24,40,.70)
+    ) !important;
+
+  border-color: rgba(255,255,255,.08) !important;
+
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+.dark .rain-glass::before {
+  background:
+    radial-gradient(
+      circle at 92% 0%,
+      rgba(56,189,248,.055),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.025),
+      transparent 48%
+    );
+}
+
+.dark [data-testid="location-summary-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15,31,48,.86),
+      rgba(12,28,44,.72)
+    ) !important;
+}
+
+.dark [data-testid="location-summary-card"] .grid.grid-cols-2 > div {
+  background: rgba(30,41,59,.62) !important;
+  border-color: rgba(255,255,255,.06);
+}
+
+.dark [data-testid="risk-fusion-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(24,20,42,.86),
+      rgba(20,25,43,.72)
+    ) !important;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  [data-testid="dashboard-map-card"] {
+    min-height: 350px;
+  }
+
+  .rain-glass {
+    border-radius: 22px;
+  }
+}
+
+
+/* =========================================================
+   RAIN VISION — FORECAST + INUNDATION ANALYTICS POLISH
+   Visual-only — data and functionality untouched
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   NEXT 24 HOURS
+   --------------------------------------------------------- */
+
+[data-testid="rainfall-preview-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.90),
+      rgba(239,248,255,.74)
+    ) !important;
+}
+
+[data-testid="rainfall-preview-card"]::before {
+  background:
+    radial-gradient(
+      circle at 88% 0%,
+      rgba(56,189,248,.11),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.34),
+      transparent 50%
+    );
+}
+
+[data-testid="rainfall-preview-card"] .text-lg {
+  font-weight: 750;
+  letter-spacing: -.025em;
+}
+
+[data-testid="rainfall-preview-card"] .text-sky-700 {
+  filter: drop-shadow(0 2px 6px rgba(14,165,233,.15));
+}
+
+/* chart gets a subtle glass stage */
+[data-testid="rainfall-preview-card"] .recharts-wrapper {
+  border-radius: 18px;
+}
+
+/* ---------------------------------------------------------
+   INUNDATION ANALYTICS
+   --------------------------------------------------------- */
+
+[data-testid="inundation-preview-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.90),
+      rgba(255,249,235,.76)
+    ) !important;
+}
+
+[data-testid="inundation-preview-card"]::before {
+  background:
+    radial-gradient(
+      circle at 90% 0%,
+      rgba(251,191,36,.12),
+      transparent 31%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.34),
+      transparent 50%
+    );
+}
+
+[data-testid="inundation-preview-card"] .text-lg {
+  font-weight: 750;
+  letter-spacing: -.025em;
+}
+
+[data-testid="inundation-preview-card"] .text-amber-700 {
+  filter: drop-shadow(0 2px 6px rgba(245,158,11,.15));
+}
+
+/* trend / rainfall information rows */
+[data-testid="inundation-preview-card"] .mt-5.space-y-3 > div {
+  position: relative;
+  padding: 9px 10px;
+
+  border: 1px solid rgba(148,163,184,.10);
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(248,250,252,.72),
+      rgba(255,255,255,.45)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+[data-testid="inundation-preview-card"] .mt-5.space-y-3 strong {
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------
+   FORECAST / INUNDATION HOVER
+   --------------------------------------------------------- */
+
+[data-testid="rainfall-preview-card"]:hover,
+[data-testid="inundation-preview-card"]:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 15px 34px rgba(15,23,42,.065),
+    inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+[data-testid="rainfall-preview-card"],
+[data-testid="inundation-preview-card"] {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+/* ---------------------------------------------------------
+   DARK MODE
+   --------------------------------------------------------- */
+
+.dark [data-testid="rainfall-preview-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15,31,48,.86),
+      rgba(11,38,58,.72)
+    ) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(35,29,19,.86),
+      rgba(52,38,12,.72)
+    ) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] .mt-5.space-y-3 > div {
+  background: rgba(30,41,59,.55);
+  border-color: rgba(255,255,255,.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+
+/* =========================================================
+   RAIN VISION — NEARBY RISK + EMERGENCY COMMAND POLISH
+   ========================================================= */
+
+/* Nearby risk panel */
+[data-testid="nearby-risk-card"] {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148,163,184,.20) !important;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(14,165,233,.055),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.92),
+      rgba(248,250,252,.78)
+    ) !important;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+[data-testid="nearby-risk-card"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.38),
+      transparent 52%
+    );
+}
+
+[data-testid="nearby-risk-card"]:hover {
+  transform: translateY(-2px);
+  border-color: rgba(14,165,233,.20) !important;
+  box-shadow:
+    0 15px 34px rgba(15,23,42,.065),
+    inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+/* Nearby risk mini-cards */
+[data-testid="nearby-risk-card"] .grid > div {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(248,250,252,.94),
+      rgba(241,245,249,.70)
+    ) !important;
+  border: 1px solid rgba(148,163,184,.16) !important;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+[data-testid="nearby-risk-card"] .grid > div:hover {
+  transform: translateY(-2px);
+  border-color: rgba(14,165,233,.24) !important;
+  box-shadow:
+    0 8px 18px rgba(15,23,42,.055);
+}
+
+/* Risk number */
+[data-testid="nearby-risk-card"] .grid > div p.font-mono {
+  letter-spacing: -.025em;
+}
+
+/* Radius control */
+[data-testid="button-radius-settings"] {
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+[data-testid="button-radius-settings"]:hover {
+  transform: translateY(-1px);
+}
+
+/* Emergency demo panel */
+[data-testid="emergency-demo-panel"] {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(99,102,241,.18) !important;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(99,102,241,.075),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.96),
+      rgba(248,250,252,.84)
+    ) !important;
+  box-shadow:
+    0 8px 26px rgba(15,23,42,.045),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+[data-testid="emergency-demo-panel"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.42),
+      transparent 50%
+    );
+}
+
+[data-testid="emergency-demo-panel"]:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99,102,241,.28) !important;
+  box-shadow:
+    0 15px 34px rgba(15,23,42,.075),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+/* Demo stage pills */
+[data-testid="emergency-demo-panel"] [data-testid^="demo-stage-"] {
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+[data-testid="emergency-demo-panel"] [data-testid^="demo-stage-"]:hover {
+  transform: translateY(-1px);
+}
+
+/* Demo action buttons */
+[data-testid="emergency-demo-panel"] button {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
+}
+
+[data-testid="emergency-demo-panel"] button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(15,23,42,.07);
+}
+
+/* Active demo state */
+[data-testid="emergency-demo-panel"].border-indigo-300 {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(99,102,241,.11),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(238,242,255,.94),
+      rgba(248,250,252,.86)
+    ) !important;
+}
+
+/* Dark mode */
+.dark [data-testid="nearby-risk-card"] {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(56,189,248,.045),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(15,31,48,.86),
+      rgba(12,28,44,.72)
+    ) !important;
+  border-color: rgba(255,255,255,.08) !important;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.dark [data-testid="nearby-risk-card"] .grid > div {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30,41,59,.70),
+      rgba(15,23,42,.58)
+    ) !important;
+  border-color: rgba(255,255,255,.06) !important;
+}
+
+.dark [data-testid="nearby-risk-card"] .grid > div:hover {
+  border-color: rgba(56,189,248,.20) !important;
+}
+
+.dark [data-testid="emergency-demo-panel"] {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(99,102,241,.065),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(20,25,48,.88),
+      rgba(15,23,42,.76)
+    ) !important;
+  border-color: rgba(129,140,248,.16) !important;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.dark [data-testid="emergency-demo-panel"].border-indigo-300 {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(99,102,241,.10),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(30,32,60,.90),
+      rgba(15,23,42,.78)
+    ) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  [data-testid="nearby-risk-card"],
+  [data-testid="emergency-demo-panel"] {
+    border-radius: 22px;
+  }
+}
+
+
+/* =========================================================
+   RAIN VISION — DARK MODE CONTRAST FIX
+   Visual-only accessibility/readability adjustment
+   ========================================================= */
+
+.dark [data-testid="inundation-preview-card"] .text-slate-600,
+.dark [data-testid="inundation-preview-card"] .text-slate-500 {
+  color: rgba(203,213,225,.82) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] .text-slate-900 {
+  color: rgba(248,250,252,.94) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] .mt-5.space-y-3 > div {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30,41,59,.62),
+      rgba(15,23,42,.48)
+    ) !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] .mt-5.space-y-3 span {
+  color: rgba(203,213,225,.82) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] .mt-5.space-y-3 strong {
+  color: rgba(248,250,252,.94) !important;
+}
+
+.dark [data-testid="inundation-preview-card"] .mt-4 {
+  color: rgba(148,163,184,.88) !important;
+}
+
+.dark [data-testid="nearby-risk-card"] .text-slate-500 {
+  color: rgba(148,163,184,.86) !important;
+}
+
+.dark [data-testid="rainfall-preview-card"] .recharts-cartesian-axis-tick-value {
+  fill: rgba(148,163,184,.82) !important;
+}
+
+.dark [data-testid="rainfall-preview-card"] .recharts-cartesian-grid-horizontal line {
+  stroke: rgba(148,163,184,.24) !important;
+}
