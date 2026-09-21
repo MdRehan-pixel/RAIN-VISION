@@ -1,3 +1,4 @@
+import certifi
 """Shared Mongo handle — import `client`/`db` from here (server.py, routers, seed.py)."""
 
 import logging
@@ -16,7 +17,7 @@ mongo_url = os.getenv("MONGO_URL")
 db_name = os.getenv("DB_NAME", "app")
 
 if mongo_url:
-    client = AsyncIOMotorClient(mongo_url)
+    client = AsyncIOMotorClient(mongo_url, tlsCAFile=certifi.where())
     db = client[db_name]
 else:
     client = None

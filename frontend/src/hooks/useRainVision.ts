@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { apiGet, apiPost } from "@/lib/api";
 import { formatTime } from "@/lib/format";
 import { calculateRisk, demoRisk } from "@/lib/risk";
-import { clearRainVisionStorage, getCacheSnapshot, getRegistration, isDemoOffline, saveCacheSnapshot, saveRegistration, setDemoOfflineStorage } from "@/lib/storage";
+import { clearRainVisionStorage, getCacheSnapshot, getRegistration, isDemoOffline, saveCacheSnapshot, saveRegistration, setDemoOfflineStorage, getOfflineQueue, queueOfflineRecord, saveOfflineQueue } from "@/lib/storage";
 import { makeFallbackForecast } from "@/lib/weather";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { DEFAULT_LOCATION, demoStages, riskRank, viewFromPath } from "@/pages/rainvision/config";
@@ -65,6 +65,7 @@ export function useRainVision() {
   const navigate = useNavigate();
   const cacheSeed = useRef(getCacheSnapshot());
   const [location, setLocation] = useState<LocationState>(cacheSeed.current?.location ?? DEFAULT_LOCATION);
+  const [mlRisk, setMlRisk] = useState<any>(null);
   const [radiusKm, setRadiusKm] = useState(cacheSeed.current?.spatial?.radius_km ?? 10);
   const [demoOffline, setDemoOffline] = useState(isDemoOffline());
   const [demoStage, setDemoStage] = useState<number | null>(null);
@@ -262,13 +263,37 @@ export function useRainVision() {
 
   // ---- effects ----
   // One-shot native GPS request on startup; failure silently keeps the explicit fallback location.
+  const fetchLiveML = async (latitude: number, longitude: number) => {
+    try {
+      const result = await apiGet<any>(
+        `/ml/live?latitude=${latitude}&longitude=${longitude}`
+      );
+      setMlRisk(result);
+    } catch (error) {
+      console.warn("Live ML prediction unavailable:", error);
+    }
+  };
+
   useEffect(() => {
     if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition((position) => setLocation(gpsLocation(position, "Current GPS location")), () => undefined, { ...GPS_OPTIONS, timeout: 8000 });
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const nextLocation = gpsLocation(position, "Current GPS location");
+        setLocation(nextLocation);
+        fetchLiveML(nextLocation.latitude, nextLocation.longitude);
+      },
+      () => undefined,
+      { ...GPS_OPTIONS, timeout: 10000 }
+    );
   }, []);
   useEffect(() => {
     if (!liveLocation || !navigator.geolocation) return;
-    const watcher = navigator.geolocation.watchPosition((position) => setLocation(gpsLocation(position, "Live GPS location")), undefined, { enableHighAccuracy: true, maximumAge: 60000 });
+    const watcher = navigator.geolocation.watchPosition((position) => {
+      const nextLocation = gpsLocation(position, "Live GPS location");
+      setLocation(nextLocation);
+      fetchLiveML(nextLocation.latitude, nextLocation.longitude);
+    }, undefined, { enableHighAccuracy: true, maximumAge: 60000 });
     return () => navigator.geolocation.clearWatch(watcher);
   }, [liveLocation]);
   useEffect(() => {
@@ -331,9 +356,76 @@ export function useRainVision() {
     sendSms({ ...buildSmsRequest(false), idempotency_key: key });
   }, [activeAlert, buildSmsRequest, currentView, demoStage, isOnline, lastUpdated, location.latitude, location.longitude, registration, risk.category, sendSms, smsConfigQuery.data]);
 
+
+  // OFFLINE_QUEUE_SYNC:
+  // Save the latest known live state locally while offline and
+  // automatically sync queued records to MongoDB when connectivity returns.
+  useEffect(() => {
+    if (!isOnline) {
+      const capturedAt =
+        mlRisk?.predicted_at ??
+        forecastQuery.data?.fetched_at ??
+        new Date().toISOString();
+
+      const id = `offline-${location.latitude.toFixed(4)}-${location.longitude.toFixed(4)}-${capturedAt}`;
+
+      queueOfflineRecord({
+        id,
+        captured_at: capturedAt,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        location,
+        ml: mlRisk,
+        forecast: forecastQuery.data,
+        risk,
+        source: "browser-offline-cache",
+      });
+
+      return;
+    }
+
+    const queued = getOfflineQueue();
+    if (!queued.length) return;
+
+    let cancelled = false;
+
+    const syncOfflineQueue = async () => {
+      try {
+        const response = await fetch("/api/ml/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ records: queued }),
+        });
+
+        if (!response.ok) return;
+
+        const result = await response.json();
+
+        if (!cancelled && result?.synced) {
+          saveOfflineQueue(
+            queued.slice(Math.min(result.synced, queued.length))
+          );
+
+          toast.success("Offline data synced", {
+            description: `${result.synced} locally cached record(s) synced to MongoDB.`,
+          });
+        }
+      } catch {
+        // Keep the queue intact. It will retry automatically on the next
+        // connectivity change/render cycle.
+      }
+    };
+
+    void syncOfflineQueue();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOnline, mlRisk, location, forecastQuery.data, risk]);
+
   return {
     navigate, currentView, location, radiusKm, setRadiusKm, demoStage, isOnline, showOffline, liveStatus, sourceMode,
-    forecast, risk, current, rainfall24, accumulations, hourlyChartData, activeAlert, lastUpdated, spatial, cities, history,
+    forecast, risk, mlRisk, current, rainfall24, accumulations, hourlyChartData, activeAlert, lastUpdated, spatial, cities, history,
     forecastQuery, radarQuery, spatialQuery, smsConfigQuery, smsStatusQuery, smsSendMutation, cacheSeed,
     searchInput, setSearchInput, searchResults, runSearch, setSearchTerm,
     registration, registrationForm, setRegistrationForm, registerLocation, sendTestSms,

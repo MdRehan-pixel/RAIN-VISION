@@ -20,10 +20,99 @@ const bannerFor = (activeAlert: boolean, showOffline: boolean, risk: RiskResult)
 };
 
 export default function DashboardView({ m }: { m: RainVisionModel }) {
-  const { navigate, location, radiusKm, demoStage, showOffline, sourceMode, forecast, risk, current, rainfall24, accumulations, hourlyChartData, activeAlert, spatial, cities, spatialQuery, selectMapPoint, useMyLocation, startDemo, nextDemoStage, resetDemo, setOffline } = m;
+  const { navigate, location, radiusKm, demoStage, showOffline, sourceMode, forecast, risk, mlRisk, current, rainfall24, accumulations, hourlyChartData, activeAlert, spatial, cities, spatialQuery, selectMapPoint, useMyLocation, startDemo, nextDemoStage, resetDemo, setOffline } = m;
   const banner = bannerFor(activeAlert, showOffline, risk);
   const simulateOffline = () => setOffline(true);
+
+const earlyWarning = (() => {
+  const hourly = forecast?.data?.hourly;
+  if (!hourly?.time?.length || sourceMode !== "LIVE") return null;
+
+  const now = Date.now();
+
+  for (let i = 0; i < hourly.time.length; i += 1) {
+    const when = new Date(hourly.time[i]).getTime();
+    if (!Number.isFinite(when) || when <= now) continue;
+
+    const probability = Number(hourly.precipitation_probability?.[i] ?? 0);
+    const rain = Number(hourly.precipitation?.[i] ?? 0);
+
+    if (probability >= 50 || rain >= 0.2) {
+      return {
+        when,
+        probability,
+        rain,
+        hoursAway: Math.max(1, Math.round((when - now) / 3600000)),
+      };
+    }
+  }
+
+  return null;
+})();
+
   return <>
+
+      <section className="mb-5">
+        <Card className="border-sky-200 bg-sky-50/70 shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <CloudRain size={18} className="text-sky-700" />
+                  Early rain warning
+                </CardTitle>
+                <CardDescription>
+                  Live hourly forecast for the current GPS location
+                </CardDescription>
+              </div>
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                {sourceMode === "LIVE" ? "LIVE" : "WAITING"}
+              </span>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            {earlyWarning ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <p className="text-xs text-slate-500">Expected window</p>
+                  <p className="text-lg font-bold">
+                    {new Date(earlyWarning.when).toLocaleTimeString([], {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-slate-500">Time to window</p>
+                  <p className="text-lg font-bold">
+                    ~{earlyWarning.hoursAway} hr
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-slate-500">Rain probability</p>
+                  <p className="text-lg font-bold">
+                    {earlyWarning.probability}%
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-600">
+                No immediate rain window detected in the live hourly forecast.
+              </p>
+            )}
+
+            <p className="mt-3 text-[11px] text-slate-400">
+              Forecast-based early warning from the live Open-Meteo hourly signal.
+              It is not an official government warning.
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+
     <a
       href="tel:112"
       data-testid="button-sos-call"
@@ -34,6 +123,54 @@ export default function DashboardView({ m }: { m: RainVisionModel }) {
       <Siren size={28} />
       <span className="sr-only">SOS emergency call</span>
     </a>
+    <section data-testid="ml-live-signal-card" className="mb-5">
+      <Card className="border-slate-200 bg-white/80 shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base">LIVE ML SIGNAL</CardTitle>
+              <p className="text-xs text-slate-500">
+                RandomForest prototype • live weather features
+              </p>
+            </div>
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+              {mlRisk?.status === "LIVE" ? "LIVE" : "WAITING"}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {mlRisk ? (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <div>
+                <p className="text-xs text-slate-500">Model class</p>
+                <p className="text-lg font-bold">{mlRisk.category}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Prediction</p>
+                <p className="text-lg font-bold">{mlRisk.prediction}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Rain 1h</p>
+                <p className="text-lg font-bold">{mlRisk.features?.rain_1h_mm ?? 0} mm</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Precip. probability</p>
+                <p className="text-lg font-bold">{mlRisk.features?.precip_probability ?? 0}%</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              Waiting for live GPS/weather model inference…
+            </p>
+          )}
+          <p className="mt-3 text-[11px] text-slate-400">
+            Operational risk remains governed by the RAIN VISION fusion engine.
+            ML output is an additional prototype signal.
+          </p>
+        </CardContent>
+      </Card>
+    </section>
+
     <section data-testid="emergency-status-banner" className={`mb-5 overflow-hidden rounded-2xl border ${banner.frame}`}><div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-start gap-3"><div className={`mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl ${banner.iconFrame}`}><banner.Icon size={20} /></div><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">{banner.eyebrow}</p><h2 data-testid="danger-assessment" className="mt-1 text-lg font-semibold text-slate-950">{banner.title}</h2><p className="mt-1 max-w-2xl text-sm text-slate-600">{banner.body}</p></div></div><div className="flex shrink-0 items-center gap-2"><ProvenanceBadge status={sourceMode} /><Button data-testid="button-view-alerts" variant="outline" size="sm" onClick={() => navigate("/alerts")}>View alerts <ChevronRight size={14} /></Button></div></div></section>
     <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
 
